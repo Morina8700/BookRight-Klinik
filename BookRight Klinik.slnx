@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="BookRight.Domain.Tests/BookRight.Domain.Tests.csproj" Id="e29f9049-39df-4e86-8312-0e7bfc5562ca" />
+    <Project Path="BookRight.Infrastructure.Tests/BookRight.Infrastructure.Tests.csproj" Id="615ad32d-fac5-4b91-9d0d-3c92b133f480" />
+    <Project Path="BookRight.UseCases.Tests/BookRight.UseCases.Tests.csproj" Id="47ff993d-d3db-4df8-abba-d2a1e8ac442a" />
+  </Folder>
+  <Project Path="BookRight.Domain/BookRight.Domain.csproj" />
+  <Project Path="BookRight.Facade/BookRight.Facade.csproj" />
+  <Project Path="BookRight.Infrastructure/BookRight.Infrastructure.csproj" />
+  <Project Path="BookRight.UI/BookRight.UI.csproj" />
+  <Project Path="BookRight.UseCases/BookRight.UseCases.csproj" />
+</Solution>
