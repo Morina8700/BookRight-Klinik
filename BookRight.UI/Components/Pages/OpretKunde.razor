@@ -1,0 +1,71 @@
+﻿@page "/kunder/opret"
+@rendermode InteractiveServer
+@using BookRight.Facade.Contracts.Kunder
+@using BookRight.Facade.Interfaces
+@using Microsoft.AspNetCore.Components.Sections
+@inject IKundeFacade KundeFacade
+
+<main>
+	<section aria-labelledby="opret-kunde-heading">
+		<header>
+			<h1 id="opret-kunde-heading">Opret kunde</h1>
+			<p>Udfyld kundens oplysninger for at oprette en ny kunde.</p>
+		</header>
+
+		<EditForm Model="model"
+				  OnValidSubmit="OpretKundeAsync"
+				  FormName="OpretKundeForm">
+
+			<label for="fornavn">Fornavn</label>
+			<InputText id="fornavn" @bind-Value="model.Fornavn" />
+
+			<label for="efternavn">Efternavn</label>
+			<InputText id="efternavn" @bind-Value="model.Efternavn" />
+
+			<label for="email">Email</label>
+			<InputText id="email" @bind-Value="model.Email" />
+
+			<label for="telefon">Telefon</label>
+			<InputText id="telefon" @bind-Value="model.Telefon" />
+
+			<label for="foedselsdato">Fødselsdato</label>
+			<InputDate id="foedselsdato" @bind-Value="model.Fødselsdato" />
+
+			<label for="adresse">Adresse</label>
+			<InputText id="adresse" @bind-Value="model.Adresse" />
+
+			<label for="helbredsnotater">Helbredsnotater</label>
+			<InputTextArea id="helbredsnotater" @bind-Value="model.Helbredsnotater" />
+
+			<button type="submit">Opret kunde</button>
+		</EditForm>
+
+		@if (!string.IsNullOrWhiteSpace(besked))
+		{
+			<p role="status">@besked</p>
+		}
+		</section>
+
+</main>
+
+
+@code {
+	private OpretKundeRequest model = new()
+	{
+		Fødselsdato = DateOnly.FromDateTime(DateTime.Today)
+	};
+
+	private string besked = "";
+
+	private async Task OpretKundeAsync()
+	{
+		var kundeId = await KundeFacade.OpretKundeAsync(model);
+
+		besked = $"Kunde oprettet med ID: {kundeId}";
+
+		model = new OpretKundeRequest
+		{
+			Fødselsdato = DateOnly.FromDateTime(DateTime.Today)
+		};
+	}
+}
