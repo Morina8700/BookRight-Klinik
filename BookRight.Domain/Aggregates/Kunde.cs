@@ -32,11 +32,20 @@ namespace BookRight.Domain.Aggregates
 
         public Kunde( string fornavn, string efternavn, string email, string telefon, DateOnly fødselsdato, string adresse, string helbredsnotater, Guid? foretrukkenBehandlerID = null)
         {
-            /*if (string.IsNullOrWhiteSpace(fornavn))
+            if (string.IsNullOrWhiteSpace(fornavn))
                 throw new ArgumentException("Fornavn må ikke være tom.");
 
             if (string.IsNullOrWhiteSpace(efternavn))
-                throw new ArgumentException("Efternavn må ikke være tom.");*/
+                throw new ArgumentException("Efternavn må ikke være tom.");
+
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("Email må ikke være tom.");
+
+            if (string.IsNullOrWhiteSpace(telefon))
+                throw new ArgumentException("Telefon må ikke være tom.");
+
+            if (string.IsNullOrWhiteSpace(adresse))
+                throw new ArgumentException("Adresse må ikke være tom.");
 
             KundeID = Guid.NewGuid();
             Fornavn = fornavn;

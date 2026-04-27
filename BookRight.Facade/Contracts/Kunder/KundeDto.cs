@@ -8,12 +8,12 @@ namespace BookRight.Facade.Contracts.Kunder
     {
         public Guid KundeId { get; set; }
 
-        public string FuldeNavn { get; set; }
+        public string FuldeNavn { get; set; } = string.Empty;
 
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
-        public string Telefon { get; set; }
+        public string Telefon { get; set; } = string.Empty;
 
-        public string LoyalitetsNiveau { get; set; }
+        public string LoyalitetsNiveau { get; set; } = string.Empty;
     }
 }

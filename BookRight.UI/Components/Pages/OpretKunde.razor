@@ -5,47 +5,79 @@
 @using Microsoft.AspNetCore.Components.Sections
 @inject IKundeFacade KundeFacade
 
-<main>
-	<section aria-labelledby="opret-kunde-heading">
-		<header>
-			<h1 id="opret-kunde-heading">Opret kunde</h1>
-			<p>Udfyld kundens oplysninger for at oprette en ny kunde.</p>
+<main class="opret-kunde-side">
+	<article class="opret-kunde-kort" aria-labelledby="opret-kunde-heading">
+		<header class="opret-kunde-header">
+			<p class="brand" aria-label="BookRight">BookRight</p>
+			<h1 id="opret-kunde-heading">Opret ny kunde</h1>
 		</header>
 
-		<EditForm Model="model"
+		<EditForm class="opret-kunde-form"
+				  Model="model"
 				  OnValidSubmit="OpretKundeAsync"
 				  FormName="OpretKundeForm">
 
-			<label for="fornavn">Fornavn</label>
-			<InputText id="fornavn" @bind-Value="model.Fornavn" />
+			<fieldset class="formular-sektion">
+				<legend class="visually-hidden">Kundens stamoplysninger</legend>
 
-			<label for="efternavn">Efternavn</label>
-			<InputText id="efternavn" @bind-Value="model.Efternavn" />
+				<div class="formular-grid">
+					<div class="formular-felt">
+						<label for="fornavn">Fornavn</label>
+						<InputText id="fornavn" autocomplete="given-name" @bind-Value="model.Fornavn" />
+					</div>
 
-			<label for="email">Email</label>
-			<InputText id="email" @bind-Value="model.Email" />
+					<div class="formular-felt">
+						<label for="efternavn">Efternavn</label>
+						<InputText id="efternavn" autocomplete="family-name" @bind-Value="model.Efternavn" />
+					</div>
 
-			<label for="telefon">Telefon</label>
-			<InputText id="telefon" @bind-Value="model.Telefon" />
+					<div class="formular-felt formular-felt--fuld">
+						<label for="adresse">Adresse</label>
+						<InputText id="adresse" autocomplete="street-address" @bind-Value="model.Adresse" />
+					</div>
+				</div>
+			</fieldset>
 
-			<label for="foedselsdato">Fødselsdato</label>
-			<InputDate id="foedselsdato" @bind-Value="model.Fødselsdato" />
+			<fieldset class="formular-sektion">
+				<legend class="visually-hidden">Kontaktoplysninger</legend>
 
-			<label for="adresse">Adresse</label>
-			<InputText id="adresse" @bind-Value="model.Adresse" />
+				<div class="formular-grid">
+					<div class="formular-felt">
+						<label for="telefon">Telefon</label>
+						<InputText id="telefon" type="tel" autocomplete="tel" @bind-Value="model.Telefon" />
+					</div>
 
-			<label for="helbredsnotater">Helbredsnotater</label>
-			<InputTextArea id="helbredsnotater" @bind-Value="model.Helbredsnotater" />
+					<div class="formular-felt">
+						<label for="email">Email</label>
+						<InputText id="email" type="email" autocomplete="email" @bind-Value="model.Email" />
+					</div>
+
+					<div class="formular-felt formular-felt--fuld">
+						<label for="foedselsdato">Fødselsdag</label>
+						<InputDate id="foedselsdato" autocomplete="bday" @bind-Value="model.Fødselsdato" />
+					</div>
+				</div>
+			</fieldset>
+
+			<fieldset class="formular-sektion">
+				<legend class="visually-hidden">Helbredsoplysninger</legend>
+
+				<div class="formular-felt">
+					<label for="helbredsnotater">Helbredsnotater</label>
+					<InputTextArea id="helbredsnotater"
+								   placeholder="Eventuelle helbredsoplysninger eller noter..."
+								   @bind-Value="model.Helbredsnotater" />
+				</div>
+			</fieldset>
 
 			<button type="submit">Opret kunde</button>
 		</EditForm>
 
 		@if (!string.IsNullOrWhiteSpace(besked))
 		{
-			<p role="status">@besked</p>
+			<p class="opret-kunde-status" role="status">@besked</p>
 		}
-		</section>
-
+	</article>
 </main>
 
 
