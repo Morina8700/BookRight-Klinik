@@ -1,0 +1,154 @@
+.opret-kunde-side {
+    min-height: 100vh;
+    padding: 0.625rem 1rem;
+    background: #eef3fb;
+}
+
+.opret-kunde-kort {
+    width: min(100%, 63rem);
+    margin: 0 auto;
+    padding: 3.75rem 3rem 3rem;
+    color: #172344;
+    background: #fff;
+    border-radius: 0.875rem;
+}
+
+.opret-kunde-header {
+    margin-bottom: 3.5rem;
+}
+
+.brand {
+    margin: 0 0 0.75rem;
+    color: #262b8f;
+    font-size: 2.000rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+h1 {
+    margin: 0;
+    color: #33415f;
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+::deep .opret-kunde-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+}
+
+.formular-sektion {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.formular-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.25rem 2.25rem;
+}
+
+.formular-felt {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.formular-felt--fuld {
+    grid-column: 1 / -1;
+}
+
+label {
+    color: #172344;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+::deep input,
+::deep textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    border: 1px solid #cfd5df;
+    border-radius: 0.875rem;
+    color: #111827;
+    background: #fff;
+    font-family: inherit;
+    font-size: 1.25rem;
+}
+
+::deep input {
+    min-height: 3.875rem;
+    padding: 0.75rem 1.5rem;
+}
+
+::deep textarea {
+    min-height: 10.625rem;
+    resize: vertical;
+    padding: 1rem 1.5rem;
+}
+
+::deep input:focus,
+::deep textarea:focus {
+    outline: 3px solid rgba(79, 63, 240, 0.22);
+    border-color: #4f3ff0;
+}
+
+button {
+    display: block;
+    width: 100%;
+    min-height: 4.5rem;
+    border: 0;
+    border-radius: 0.875rem;
+    color: #fff;
+    background: #4f3ff0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+button:focus {
+    outline: 3px solid rgba(79, 63, 240, 0.3);
+    outline-offset: 3px;
+}
+
+.opret-kunde-status {
+    margin: 1.5rem 0 0;
+    color: #14532d;
+    font-weight: 700;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (max-width: 48rem) {
+    .opret-kunde-kort {
+        padding: 2rem 1.25rem;
+    }
+
+    .brand {
+        font-size: 2.25rem;
+    }
+
+    .formular-grid {
+        grid-template-columns: 1fr;
+    }
+
+    ::deep .opret-kunde-form {
+        gap: 1.75rem;
+    }
+}

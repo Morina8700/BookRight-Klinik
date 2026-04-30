@@ -1,6 +1,9 @@
 using BookRight.UI.Components;
+using BookRight.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -25,3 +28,5 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+

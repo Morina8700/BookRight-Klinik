@@ -1,0 +1,103 @@
+﻿@page "/kunder/opret"
+@rendermode InteractiveServer
+@using BookRight.Facade.Contracts.Kunder
+@using BookRight.Facade.Interfaces
+@using Microsoft.AspNetCore.Components.Sections
+@inject IKundeFacade KundeFacade
+
+<main class="opret-kunde-side">
+	<article class="opret-kunde-kort" aria-labelledby="opret-kunde-heading">
+		<header class="opret-kunde-header">
+			<p class="brand" aria-label="BookRight">BookRight</p>
+			<h1 id="opret-kunde-heading">Opret ny kunde</h1>
+		</header>
+
+		<EditForm class="opret-kunde-form"
+				  Model="model"
+				  OnValidSubmit="OpretKundeAsync"
+				  FormName="OpretKundeForm">
+
+			<fieldset class="formular-sektion">
+				<legend class="visually-hidden">Kundens stamoplysninger</legend>
+
+				<div class="formular-grid">
+					<div class="formular-felt">
+						<label for="fornavn">Fornavn</label>
+						<InputText id="fornavn" autocomplete="given-name" @bind-Value="model.Fornavn" />
+					</div>
+
+					<div class="formular-felt">
+						<label for="efternavn">Efternavn</label>
+						<InputText id="efternavn" autocomplete="family-name" @bind-Value="model.Efternavn" />
+					</div>
+
+					<div class="formular-felt formular-felt--fuld">
+						<label for="adresse">Adresse</label>
+						<InputText id="adresse" autocomplete="street-address" @bind-Value="model.Adresse" />
+					</div>
+				</div>
+			</fieldset>
+
+			<fieldset class="formular-sektion">
+				<legend class="visually-hidden">Kontaktoplysninger</legend>
+
+				<div class="formular-grid">
+					<div class="formular-felt">
+						<label for="telefon">Telefon</label>
+						<InputText id="telefon" type="tel" autocomplete="tel" @bind-Value="model.Telefon" />
+					</div>
+
+					<div class="formular-felt">
+						<label for="email">Email</label>
+						<InputText id="email" type="email" autocomplete="email" @bind-Value="model.Email" />
+					</div>
+
+					<div class="formular-felt formular-felt--fuld">
+						<label for="foedselsdato">Fødselsdag</label>
+						<InputDate id="foedselsdato" autocomplete="bday" @bind-Value="model.Fødselsdato" />
+					</div>
+				</div>
+			</fieldset>
+
+			<fieldset class="formular-sektion">
+				<legend class="visually-hidden">Helbredsoplysninger</legend>
+
+				<div class="formular-felt">
+					<label for="helbredsnotater">Helbredsnotater</label>
+					<InputTextArea id="helbredsnotater"
+								   placeholder="Eventuelle helbredsoplysninger eller noter..."
+								   @bind-Value="model.Helbredsnotater" />
+				</div>
+			</fieldset>
+
+			<button type="submit">Opret kunde</button>
+		</EditForm>
+
+		@if (!string.IsNullOrWhiteSpace(besked))
+		{
+			<p class="opret-kunde-status" role="status">@besked</p>
+		}
+	</article>
+</main>
+
+
+@code {
+	private OpretKundeRequest model = new()
+	{
+		Fødselsdato = DateOnly.FromDateTime(DateTime.Today)
+	};
+
+	private string besked = "";
+
+	private async Task OpretKundeAsync()
+	{
+		var kundeId = await KundeFacade.OpretKundeAsync(model);
+
+		besked = $"Kunde oprettet med ID: {kundeId}";
+
+		model = new OpretKundeRequest
+		{
+			Fødselsdato = DateOnly.FromDateTime(DateTime.Today)
+		};
+	}
+}
