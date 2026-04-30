@@ -1,13 +1,9 @@
 using BookRight.UI.Components;
 using BookRight.Infrastructure.DependencyInjection;
-using BookRight.UseCases.DependencyInjection;
-using BookRight.Facade.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddUseCases();
-builder.Services.AddFacade();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
