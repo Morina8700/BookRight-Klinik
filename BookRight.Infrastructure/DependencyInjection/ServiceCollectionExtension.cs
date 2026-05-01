@@ -30,6 +30,7 @@ namespace BookRight.Infrastructure.DependencyInjection
 
             // Facades
             services.AddScoped<IKundeFacade, KundeFacade>();
+            services.AddScoped<IBookingFacade, BookingFacade>();
 
             return services;
         }
