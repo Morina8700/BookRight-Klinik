@@ -7,6 +7,7 @@ using BookRight.UseCases.Commands;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 namespace BookRight.Infrastructure.DependencyInjection
 {
     public static class ServiceCollectionExtension
@@ -15,9 +16,22 @@ namespace BookRight.Infrastructure.DependencyInjection
         {
             services.AddDbContext<BookRightDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            // Repositories
             services.AddScoped<IKundeRepository, KundeRepository>();
-            services.AddScoped<IKundeFacade, KundeFacade>();
+            services.AddScoped<IBookingRepository, BookingRepository>();
+            services.AddScoped<IBehandlerRepository, BehandlerRepository>();
+            services.AddScoped<IKlinikRepository, KlinikRepository>();
+            services.AddScoped<IBehandlingstypeRepository, BehandlingstypeRepository>();
+
+            // Handlers
             services.AddScoped<OpretKundeHandler>();
+            services.AddScoped<OpretBookingHandler>();
+
+            // Facades
+            services.AddScoped<IKundeFacade, KundeFacade>();
+            services.AddScoped<IBookingFacade, BookingFacade>();
+
             return services;
         }
     }

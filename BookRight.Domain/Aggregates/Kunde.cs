@@ -7,7 +7,7 @@ namespace BookRight.Domain.Aggregates
 {
    public class Kunde
     {
-        public Guid KundeID { get; private set; }
+        public Guid KundeId { get; private set; }
         public string Fornavn { get; private set; } = string.Empty;
         public string Efternavn { get; private set; } = string.Empty;
 
@@ -47,7 +47,7 @@ namespace BookRight.Domain.Aggregates
             if (string.IsNullOrWhiteSpace(adresse))
                 throw new ArgumentException("Adresse må ikke være tom.");
 
-            KundeID = Guid.NewGuid();
+            KundeId = Guid.NewGuid();
             Fornavn = fornavn;
             Efternavn = efternavn;
             Email = email;

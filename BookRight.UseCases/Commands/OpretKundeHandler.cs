@@ -28,7 +28,7 @@ namespace BookRight.UseCases.Commands
                 command.ForetrukkenBehandlerID
             );
             await _kundeRepository.TilføjAsync(kunde);
-            return kunde.KundeID;
+            return kunde.KundeId;
         }
     }
 }

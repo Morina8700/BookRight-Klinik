@@ -26,7 +26,7 @@ namespace BookRight.Infrastructure.Repositories
         public async Task<Kunde?> HentPåIdAsync(Guid kundeId)
         {
             return await _context.Kunder
-                .FirstOrDefaultAsync(k => k.KundeID == kundeId);
+                .FirstOrDefaultAsync(k => k.KundeId == kundeId);
         }
     }
 }
