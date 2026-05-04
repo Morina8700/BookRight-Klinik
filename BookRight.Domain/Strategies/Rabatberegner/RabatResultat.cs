@@ -1,15 +1,15 @@
-﻿using System;
+﻿using BookRight.Domain.Enums;
+using BookRight.Domain.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace BookRight.Domain.Strategies.Rabatberegner
 {
     public record RabatResultat(
-        string RabatNavn,
-        decimal RabatProcent,
-        decimal PrisUdenRabat,
-        decimal PrisMedRabat
-
-
+        RabatType RabatType,
+        RabatProcent RabatProcent,
+        Penge PrisUdenRabat,
+        Penge PrisMedRabat
         );
 }

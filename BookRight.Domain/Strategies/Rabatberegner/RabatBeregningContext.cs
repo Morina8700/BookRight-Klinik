@@ -1,4 +1,6 @@
-﻿using BookRight.Domain.Enums;
+﻿using BookRight.Domain.Aggregates;
+using BookRight.Domain.Enums;
+using BookRight.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,12 +9,12 @@ namespace BookRight.Domain.Strategies.Rabatberegner
 {
     public record RabatBeregningContext(
     
-        decimal PrisUdenRabat,
+        Penge PrisUdenRabat,
         DateOnly BookingDato,
         DateOnly KundeFoedselsdato,
         LoyalitetsNiveau LoyalitetsNiveau,
         bool FoedselsdagsrabatBrugt,
-        IReadOnlyCollection<string> Behandlingstyper,
+        IReadOnlyCollection<BehandlingsType> Behandlingstyper,
         IReadOnlyCollection<Kampagne> AktivKampagner
     );
 
