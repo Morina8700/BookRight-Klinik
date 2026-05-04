@@ -18,13 +18,13 @@ namespace BookRight.Domain.Strategies.Rabatberegner
                 _ => new RabatProcent(0)
             };
 
-            var prisUdenRabat = context.PrisUdenRabat.FratraekRabat(rabatProcent);
+            var prisMedRabat = context.PrisUdenRabat.FratraekRabat(rabatProcent);
 
             return new RabatResultat(
-                RabatType.Loyalitet,
+                rabatProcent.Value == 0 ? RabatType.Ingen : RabatType.Loyalitet,
                 rabatProcent,
                 context.PrisUdenRabat,
-                prisUdenRabat
+                prisMedRabat
             );
         }
     }

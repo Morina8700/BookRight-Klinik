@@ -8,7 +8,7 @@ namespace BookRight.Domain.Enums
     {
         Fysioterapi,
         Sportsmassage,
-        Akupuntur,
+        Akupunktur,
         Kostvejledning,
         Holdtræning,
     }
