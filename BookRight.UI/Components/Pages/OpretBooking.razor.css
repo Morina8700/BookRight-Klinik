@@ -1,0 +1,179 @@
+﻿.opret-booking-side {
+    min-height: 100vh;
+    padding: 0.625rem 1rem;
+    background: #eef3fb;
+}
+
+.opret-booking-kort {
+    width: min(100%, 63rem);
+    margin: 0 auto;
+    padding: 3.75rem 3rem 3rem;
+    color: #172344;
+    background: #fff;
+    border-radius: 0.875rem;
+}
+
+.opret-booking-header {
+    margin-bottom: 3.5rem;
+}
+
+.brand {
+    margin: 0 0 0.75rem;
+    color: #262b8f;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+h1 {
+    margin: 0;
+    color: #33415f;
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+.opret-booking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+}
+
+.formular-sektion {
+    min-width: 0;
+}
+
+.formular-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.25rem;
+}
+
+.formular-felt {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+label {
+    color: #172344;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+input,
+select {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 3.875rem;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #cfd5df;
+    border-radius: 0.875rem;
+    color: #111827;
+    background: #fff;
+    font-family: inherit;
+    font-size: 1.25rem;
+    appearance: none;
+}
+
+select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1.5rem center;
+    background-size: 16px 12px;
+    padding-right: 3rem;
+}
+
+input:focus,
+select:focus {
+    outline: 3px solid rgba(79, 63, 240, 0.22);
+    border-color: #4f3ff0;
+}
+
+input:disabled,
+select:disabled {
+    background: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.pris-boks {
+    padding: 1.5rem;
+    background: #f0f4ff;
+    border-radius: 0.875rem;
+    border: 1px solid #c7d2fe;
+}
+
+.pris-label {
+    margin: 0 0 0.25rem;
+    color: #4b5563;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.pris-beloeb {
+    margin: 0 0 0.25rem;
+    color: #172344;
+    font-size: 1.75rem;
+    font-weight: 800;
+}
+
+.pris-note {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+button {
+    display: block;
+    width: 100%;
+    min-height: 4.5rem;
+    border: 0;
+    border-radius: 0.875rem;
+    color: #fff;
+    background: #4f3ff0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+button:disabled {
+    background: #a5b4fc;
+    cursor: not-allowed;
+}
+
+button:focus {
+    outline: 3px solid rgba(79, 63, 240, 0.3);
+    outline-offset: 3px;
+}
+
+.status-succes {
+    margin: 0;
+    color: #14532d;
+    font-weight: 700;
+}
+
+.status-fejl {
+    margin: 0;
+    color: #991b1b;
+    font-weight: 700;
+}
+
+@media (max-width: 48rem) {
+    .opret-booking-kort {
+        padding: 2rem 1.25rem;
+    }
+
+    .brand {
+        font-size: 2.25rem;
+    }
+
+    .formular-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .opret-booking-form {
+        gap: 1.75rem;
+    }
+}
