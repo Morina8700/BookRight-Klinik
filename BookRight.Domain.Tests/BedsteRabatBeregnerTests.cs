@@ -38,7 +38,7 @@ namespace BookRight.Domain.Tests
 
             var resultat = beregner.BeregnBedsteRabat(context);
 
-            Assert.Equal(RabatType.Foedselsdag, resultat.RabatType);
+            Assert.Equal(RabatType.Fødselsdag, resultat.RabatType);
             Assert.Equal(25, resultat.RabatProcent.Value);
             Assert.Equal(750, resultat.PrisMedRabat.Belob);
         }

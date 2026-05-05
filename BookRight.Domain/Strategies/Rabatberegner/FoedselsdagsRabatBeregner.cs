@@ -27,7 +27,7 @@ namespace BookRight.Domain.Strategies.Rabatberegner
             var prisMedRabat = context.PrisUdenRabat.FratraekRabat(rabatProcent);
 
             return new RabatResultat(
-                RabatType.Foedselsdag,
+                RabatType.Fødselsdag,
                 rabatProcent,
                 context.PrisUdenRabat,
                 prisMedRabat
