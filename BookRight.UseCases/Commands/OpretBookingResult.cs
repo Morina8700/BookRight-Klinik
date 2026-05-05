@@ -1,10 +1,12 @@
-﻿namespace BookRight.Facade.Contracts.Bookinger
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace BookRight.UseCases.Commands
 {
-    public class BookingResponse
+    public class OpretBookingResult
     {
         public bool Success { get; set; }
-        public string Message { get; set; } = "";
-
         public decimal PrisUdenRabat { get; set; }
         public decimal PrisMedRabat { get; set; }
         public string? AnvendtRabatType { get; set; }

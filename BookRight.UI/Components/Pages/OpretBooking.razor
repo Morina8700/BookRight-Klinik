@@ -101,6 +101,18 @@
                         </div>
                     }
                 }
+                @* Vis pris efter booking *@
+                @if (senesteBookingResponse is not null && senesteBookingResponse.Success)
+                {
+                    <div class="pris-boks">
+                        <p class="pris-label">Pris med rabat</p>
+                        <p class="pris-beloeb">@senesteBookingResponse.PrisMedRabat kr.</p>
+
+                        <p class="pris-note">
+                            Anvendt rabat: @senesteBookingResponse.AnvendtRabatType
+                        </p>
+                    </div>
+                }
 
                 @* Fejl- og succesbesked *@
                 @if (!string.IsNullOrEmpty(besked))
@@ -127,6 +139,7 @@
     private Guid valgteBehandlerId = Guid.Empty;
     private Guid valgteBehandlingstypeId = Guid.Empty;
     private BehandlingstypeDto? valgteBehandlingstype;
+    private BookingResponse? senesteBookingResponse;
 
     private DateOnly valgtDato = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly valgtStartTid = TimeOnly.MinValue;
@@ -234,6 +247,8 @@
         };
 
         var response = await BookingFacade.OpretBookingAsync(request);
+
+        senesteBookingResponse = response;
         besked = response.Message;
         success = response.Success;
     }

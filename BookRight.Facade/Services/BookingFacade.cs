@@ -33,18 +33,23 @@ namespace BookRight.Facade.Services
                 request.BehandlingstypeId,
                 request.StartTid,
                 request.SlutTid,
-                request.PrisUdenRabat,
-                request.PrisMedRabat,
-                request.AnvendtRabatType,
+                0,
+                0,
+                null,
                 request.KampagneId
             );
 
-            var success = await _opretBookingHandler.HandleAsync(command);
+            var result = await _opretBookingHandler.HandleAsync(command);
 
             return new BookingResponse
             {
-                Success = success,
-                Message = success ? "Booking oprettet." : "Booking kunne ikke oprettes – tjek om behandleren er ledig og har ledige rum."
+                Success = result.Success,
+                Message = result.Success
+        ? "Booking oprettet."
+        : "Booking kunne ikke oprettes – tjek om behandleren er ledig og har ledige rum.",
+                PrisUdenRabat = result.PrisUdenRabat,
+                PrisMedRabat = result.PrisMedRabat,
+                AnvendtRabatType = result.AnvendtRabatType
             };
         }
 

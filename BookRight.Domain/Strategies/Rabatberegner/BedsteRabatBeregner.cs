@@ -1,5 +1,6 @@
 using BookRight.Domain.Enums;
 using BookRight.Domain.ValueObjects;
+using System.Collections.Concurrent;
 
 namespace BookRight.Domain.Strategies.Rabatberegner
 {
@@ -12,25 +13,32 @@ namespace BookRight.Domain.Strategies.Rabatberegner
             _rabatBeregnere = rabatBeregnere.ToList();
         }
 
-        public async Task<RabatResultat> BeregnBedsteRabatAsync(RabatBeregningContext context)
+        public RabatResultat BeregnBedsteRabat(RabatBeregningContext context)
         {
-            if (_rabatBeregnere.Count == 0)
+            if(_rabatBeregnere.Count == 0)
             {
                 return new RabatResultat(
                     RabatType.Ingen,
                     new RabatProcent(0),
                     context.PrisUdenRabat,
-                    context.PrisUdenRabat);
+                    context.PrisUdenRabat
+                );
             }
 
-            var beregninger = _rabatBeregnere
-                .Select(beregner => Task.Run(() => beregner.BeregnRabat(context)));
+            //Her bruges CPU-bound parallelisme. Hver rabatstrategi kører parallelt på thread poolen. Resultaterne samles i en ConcurrentBag,
+            //Som er thread-safe og derfor beskytter mod race conditions.
+            var resultater = new ConcurrentBag<RabatResultat>();
 
-            var resultater = await Task.WhenAll(beregninger);
+            Parallel.ForEach(_rabatBeregnere, beregner =>
+            {
+                var resultat = beregner.BeregnRabat(context);
+                resultater.Add(resultat);
+            });
 
+            // Når alle strategier er færdige, sorteres resultaterne efter laveste pris. Den billigste pris vælges automatisk.
             return resultater
-                .OrderBy(resultat => resultat.PrisMedRabat.Belob)
-                .ThenByDescending(resultat => resultat.RabatProcent.Value)
+                .OrderBy(r => r.PrisMedRabat.Belob)
+                .ThenByDescending(r => r.RabatProcent.Value)
                 .First();
         }
     }

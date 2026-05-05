@@ -10,6 +10,9 @@ namespace BookRight.Domain.Strategies.Rabatberegner
     {
         public RabatResultat BeregnRabat(RabatBeregningContext context)
         {
+            // Loyalitetsstrategien kigger på kundens loyalitetsniveau
+            // og giver en rabat baseret på det niveau.
+            // For eksempel: Sølvmedlemmer får 10% rabat, guldmedlemmer får 15% rabat, og bronzemedlemmer får 5% rabat.
             var rabatProcent = context.LoyalitetsNiveau switch
             {
                 LoyalitetsNiveau.Bronze => new RabatProcent(5),

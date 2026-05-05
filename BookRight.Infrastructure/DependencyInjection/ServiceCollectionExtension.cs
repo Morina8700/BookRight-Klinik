@@ -1,4 +1,5 @@
 ﻿using BookRight.Domain.Interfaces;
+using BookRight.Domain.Strategies.Rabatberegner;
 using BookRight.Facade.Interfaces;
 using BookRight.Facade.Services;
 using BookRight.Infrastructure.Persistence;
@@ -31,6 +32,14 @@ namespace BookRight.Infrastructure.DependencyInjection
             // Facades
             services.AddScoped<IKundeFacade, KundeFacade>();
             services.AddScoped<IBookingFacade, BookingFacade>();
+
+            //RabatBeregner
+            services.AddScoped<IRabatBeregner, LoyalitetsRabatBeregner>();
+            services.AddScoped<IRabatBeregner, FoedselsdagsRabatBeregner>();
+            services.AddScoped<IRabatBeregner, KampagneRabatBeregner>();
+
+            services.AddScoped<BedsteRabatBeregner>();
+
 
             return services;
         }
