@@ -1,4 +1,5 @@
 ﻿using BookRight.Facade.Contracts.Bookinger;
+using BookRight.Facade.Contracts.Kunder;
 using BookRight.Facade.Interfaces;
 using BookRight.Domain.Interfaces;
 using BookRight.UseCases.Commands;
@@ -8,17 +9,20 @@ namespace BookRight.Facade.Services
     public class BookingFacade : IBookingFacade
     {
         private readonly OpretBookingHandler _opretBookingHandler;
+        private readonly IKundeRepository _kundeRepository;
         private readonly IBehandlerRepository _behandlerRepository;
         private readonly IKlinikRepository _klinikRepository;
         private readonly IBehandlingstypeRepository _behandlingstypeRepository;
 
         public BookingFacade(
             OpretBookingHandler opretBookingHandler,
+            IKundeRepository kundeRepository,
             IBehandlerRepository behandlerRepository,
             IKlinikRepository klinikRepository,
             IBehandlingstypeRepository behandlingstypeRepository)
         {
             _opretBookingHandler = opretBookingHandler;
+            _kundeRepository = kundeRepository;
             _behandlerRepository = behandlerRepository;
             _klinikRepository = klinikRepository;
             _behandlingstypeRepository = behandlingstypeRepository;
@@ -46,6 +50,19 @@ namespace BookRight.Facade.Services
                 Success = success,
                 Message = success ? "Booking oprettet." : "Booking kunne ikke oprettes – tjek om behandleren er ledig og har ledige rum."
             };
+        }
+
+        public async Task<IEnumerable<KundeDto>> HentAlleKunderAsync()
+        {
+            var kunder = await _kundeRepository.HentAlleAsync();
+            return kunder.Select(k => new KundeDto
+            {
+                KundeId = k.KundeId,
+                FuldeNavn = $"{k.Fornavn} {k.Efternavn}",
+                Email = k.Email,
+                Telefon = k.Telefon,
+                LoyalitetsNiveau = k.loyalitetsNiveau.ToString()
+            });
         }
 
         public async Task<IEnumerable<BehandlerDto>> HentAlleBehandlereAsync()

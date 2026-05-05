@@ -1,6 +1,7 @@
 @page "/opret-booking"
 @rendermode InteractiveServer
 @using BookRight.Facade.Contracts.Bookinger
+@using BookRight.Facade.Contracts.Kunder
 @using BookRight.Facade.Interfaces
 @inject IBookingFacade BookingFacade
 
@@ -19,11 +20,17 @@
         {
             <div class="opret-booking-form">
 
-                @* Kunde ID *@
+                @* Kunde *@
                 <div class="formular-sektion">
                     <div class="formular-felt">
-                        <label for="kundeId">Kunde ID</label>
-                        <input id="kundeId" type="text" @bind="kundeIdInput" placeholder="Indsæt kunde-ID (Guid)" />
+                        <label for="kunde">Kunde</label>
+                        <select id="kunde" @onchange="OnKundeValgt">
+                            <option value="">-- Vælg kunde --</option>
+                            @foreach (var kunde in alleKunder)
+                            {
+                                <option value="@kunde.KundeId">@kunde.FuldeNavn</option>
+                            }
+                        </select>
                     </div>
                 </div>
 
@@ -118,11 +125,12 @@
 
 @code {
     private List<KlinikDto> alleKlinikker = new();
+    private List<KundeDto> alleKunder = new();
     private List<BehandlerDto> alleBehandlere = new();
     private List<BehandlerDto> filtrerdeBehandlere = new();
     private List<BehandlingstypeDto> filtrerdeBehandlingstyper = new();
 
-    private string kundeIdInput = "";
+    private Guid valgtKundeId = Guid.Empty;
     private Guid valgteKlinikId = Guid.Empty;
     private Guid valgteBehandlerId = Guid.Empty;
     private Guid valgteBehandlingstypeId = Guid.Empty;
@@ -137,9 +145,21 @@
 
     protected override async Task OnInitializedAsync()
     {
+        alleKunder = (await BookingFacade.HentAlleKunderAsync()).ToList();
         alleKlinikker = (await BookingFacade.HentAlleKlinikkerAsync()).ToList();
         alleBehandlere = (await BookingFacade.HentAlleBehandlereAsync()).ToList();
         isLoading = false;
+    }
+
+    private void OnKundeValgt(ChangeEventArgs e)
+    {
+        if (!Guid.TryParse(e.Value?.ToString(), out var id))
+        {
+            valgtKundeId = Guid.Empty;
+            return;
+        }
+
+        valgtKundeId = id;
     }
 
     private void OnKlinikValgt(ChangeEventArgs e)
@@ -181,7 +201,7 @@
 
     private bool KanOprette()
     {
-        return Guid.TryParse(kundeIdInput, out _) &&
+        return valgtKundeId != Guid.Empty &&
                valgteKlinikId != Guid.Empty &&
                valgteBehandlerId != Guid.Empty &&
                valgteBehandlingstypeId != Guid.Empty &&
@@ -192,7 +212,7 @@
     {
         if (!KanOprette())
         {
-            besked = "Udfyld kunde-ID, vælg klinik, behandler, behandlingstype og starttidspunkt før du opretter en booking.";
+            besked = "Vælg kunde, klinik, behandler, behandlingstype og starttidspunkt før du opretter en booking.";
             success = false;
             return;
         }
@@ -202,9 +222,9 @@
 
     private async Task OpretBookingAsync()
     {
-        if (!Guid.TryParse(kundeIdInput, out var kundeId))
+        if (valgtKundeId == Guid.Empty)
         {
-            besked = "Ugyldigt kunde-ID.";
+            besked = "Vælg en kunde.";
             success = false;
             return;
         }
@@ -222,7 +242,7 @@
 
         var request = new OpretBookingRequest
         {
-            KundeId = kundeId,
+            KundeId = valgtKundeId,
             BehandlerId = valgteBehandlerId,
             KlinikId = valgteKlinikId,
             BehandlingstypeId = valgteBehandlingstypeId,

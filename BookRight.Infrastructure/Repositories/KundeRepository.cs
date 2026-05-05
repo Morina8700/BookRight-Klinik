@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using BookRight.Domain.Aggregates;
 using BookRight.Domain.Interfaces;
 using BookRight.Infrastructure.Persistence;
@@ -27,6 +28,14 @@ namespace BookRight.Infrastructure.Repositories
         {
             return await _context.Kunder
                 .FirstOrDefaultAsync(k => k.KundeId == kundeId);
+        }
+
+        public async Task<IEnumerable<Kunde>> HentAlleAsync()
+        {
+            return await _context.Kunder
+                .OrderBy(k => k.Fornavn)
+                .ThenBy(k => k.Efternavn)
+                .ToListAsync();
         }
     }
 }

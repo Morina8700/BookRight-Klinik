@@ -9,5 +9,6 @@ namespace BookRight.Domain.Interfaces
     {
         Task TilføjAsync(Kunde kunde);
         Task<Kunde?> HentPåIdAsync(Guid kundeID);
+        Task<IEnumerable<Kunde>> HentAlleAsync();
     }
 }
