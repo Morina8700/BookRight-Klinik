@@ -3,12 +3,14 @@ using BookRight.Facade.Contracts.Kunder;
 using BookRight.Facade.Interfaces;
 using BookRight.Domain.Interfaces;
 using BookRight.UseCases.Commands;
+using BookRight.UseCases.Queries;
 
 namespace BookRight.Facade.Services
 {
     public class BookingFacade : IBookingFacade
     {
         private readonly OpretBookingHandler _opretBookingHandler;
+        private readonly HentKundehistorikHandler _hentKundehistorikHandler;
         private readonly IKundeRepository _kundeRepository;
         private readonly IBehandlerRepository _behandlerRepository;
         private readonly IKlinikRepository _klinikRepository;
@@ -16,12 +18,14 @@ namespace BookRight.Facade.Services
 
         public BookingFacade(
             OpretBookingHandler opretBookingHandler,
+            HentKundehistorikHandler hentKundehistorikHandler,
             IKundeRepository kundeRepository,
             IBehandlerRepository behandlerRepository,
             IKlinikRepository klinikRepository,
             IBehandlingstypeRepository behandlingstypeRepository)
         {
             _opretBookingHandler = opretBookingHandler;
+            _hentKundehistorikHandler = hentKundehistorikHandler;
             _kundeRepository = kundeRepository;
             _behandlerRepository = behandlerRepository;
             _klinikRepository = klinikRepository;
@@ -62,6 +66,21 @@ namespace BookRight.Facade.Services
                 Email = k.Email,
                 Telefon = k.Telefon,
                 LoyalitetsNiveau = k.loyalitetsNiveau.ToString()
+            });
+        }
+
+        public async Task<IEnumerable<KundehistorikDto>> HentKundehistorikAsync(Guid kundeId)
+        {
+            var historik = await _hentKundehistorikHandler.HandleAsync(kundeId);
+            return historik.Select(h => new KundehistorikDto
+            {
+                BookingId = h.BookingId,
+                StartTid = h.StartTid,
+                SlutTid = h.SlutTid,
+                KlinikNavn = h.KlinikNavn,
+                BehandlerNavn = h.BehandlerNavn,
+                BehandlingstypeNavn = h.BehandlingstypeNavn,
+                Status = h.Status.ToString()
             });
         }
 

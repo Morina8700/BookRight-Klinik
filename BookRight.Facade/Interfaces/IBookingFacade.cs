@@ -7,6 +7,7 @@ namespace BookRight.Facade.Interfaces
     {
         Task<BookingResponse> OpretBookingAsync(OpretBookingRequest request);
         Task<IEnumerable<KundeDto>> HentAlleKunderAsync();
+        Task<IEnumerable<KundehistorikDto>> HentKundehistorikAsync(Guid kundeId);
         Task<IEnumerable<BehandlerDto>> HentAlleBehandlereAsync();
         Task<IEnumerable<KlinikDto>> HentAlleKlinikkerAsync();
         Task<IEnumerable<BehandlingstypeDto>> HentAlleBehandlingstyperAsync();

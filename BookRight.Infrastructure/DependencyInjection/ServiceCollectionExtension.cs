@@ -4,6 +4,7 @@ using BookRight.Facade.Services;
 using BookRight.Infrastructure.Persistence;
 using BookRight.Infrastructure.Repositories;
 using BookRight.UseCases.Commands;
+using BookRight.UseCases.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,7 @@ namespace BookRight.Infrastructure.DependencyInjection
             // Handlers
             services.AddScoped<OpretKundeHandler>();
             services.AddScoped<OpretBookingHandler>();
+            services.AddScoped<HentKundehistorikHandler>();
 
             // Facades
             services.AddScoped<IKundeFacade, KundeFacade>();
