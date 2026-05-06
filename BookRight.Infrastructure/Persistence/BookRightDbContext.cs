@@ -1,5 +1,6 @@
 ﻿using BookRight.Domain.Aggregates;
 using BookRight.Domain.Enums;
+using BookRight.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookRight.Infrastructure.Persistence
@@ -13,6 +14,8 @@ namespace BookRight.Infrastructure.Persistence
         public DbSet<Klinik> Klinikker => Set<Klinik>();
         public DbSet<Behandlingstype> Behandlingstyper => Set<Behandlingstype>();
         public DbSet<Booking> Bookinger => Set<Booking>();
+
+        public DbSet<Kampagne> Kampagner => Set<Kampagne>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -164,6 +167,70 @@ namespace BookRight.Infrastructure.Persistence
                         new { BehandlingstyperBehandlingstypeId = kostFørsteId, BehandlerId = b12 },
                         new { BehandlingstyperBehandlingstypeId = kostOpfølgId, BehandlerId = b12 }
                     ));
+
+            // 1. Mapping
+            modelBuilder.Entity<Kampagne>(entity =>
+            {
+                entity.HasKey(k => k.KampagneId);
+
+                entity.OwnsOne(k => k.Periode, periode =>
+                {
+                    periode.Property(p => p.StartDato).HasColumnName("StartDato");
+                    periode.Property(p => p.SlutDato).HasColumnName("SlutDato");
+                });
+
+                entity.OwnsOne(k => k.Rabatprocent, rabat =>
+                {
+                    rabat.Property(r => r.Value)
+                        .HasColumnName("RabatProcent")
+                        .HasPrecision(5, 2);
+                });
+
+                entity.Property(k => k.GaeldendeBehandlingstyper)
+                    .HasConversion(
+                        v => string.Join(",", v),
+                        v => v.Split(",", StringSplitOptions.RemoveEmptyEntries)
+                            .Select(x => Enum.Parse<BehandlingsType>(x))
+                            .ToList()
+                    );
+            });
+
+            // 2. Kampagne seed
+            var kampagne1Id = Guid.Parse("cccccccc-0001-0000-0000-000000000000");
+
+            modelBuilder.Entity<Kampagne>().HasData(
+                new
+                {
+                    KampagneId = kampagne1Id,
+                    Navn = "Sommerkampagne fysioterapi",
+                    Aktiv = true,
+                    GaeldendeBehandlingstyper = new List<BehandlingsType>
+                    {
+            BehandlingsType.Fysioterapi
+                    }
+                }
+            );
+
+            // 3. Owned type seed: Periode
+            modelBuilder.Entity<Kampagne>().OwnsOne(k => k.Periode).HasData(
+                new
+                {
+                    KampagneId = kampagne1Id,
+                    StartDato = new DateOnly(2026, 6, 1),
+                    SlutDato = new DateOnly(2026, 6, 30)
+                }
+            );
+
+            // 4. Owned type seed: Rabatprocent
+            modelBuilder.Entity<Kampagne>().OwnsOne(k => k.Rabatprocent).HasData(
+                new
+                {
+                    KampagneId = kampagne1Id,
+                    Value = 20m
+                }
+            );
+
+
         }
     }
 }

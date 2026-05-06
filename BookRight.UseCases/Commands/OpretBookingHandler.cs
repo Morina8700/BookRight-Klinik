@@ -14,6 +14,7 @@ namespace BookRight.UseCases.Commands
         private readonly IBehandlingstypeRepository _behandlingstypeRepository;
         private readonly BedsteRabatBeregner _bedsteRabatBeregner;
         private readonly IKundeRepository _kundeRepository;
+        private readonly IKampagneRepository _kampagneRepository;
 
         public OpretBookingHandler(
             IBookingRepository bookingRepository,
@@ -21,7 +22,8 @@ namespace BookRight.UseCases.Commands
             IBehandlerRepository behandlerRepository,
             IBehandlingstypeRepository behandlingstypeRepository,
             BedsteRabatBeregner bedsteRabatBeregner,
-            IKundeRepository kundeRepository
+            IKundeRepository kundeRepository,
+            IKampagneRepository kampagneRepository
             )
         {
             _bookingRepository = bookingRepository;
@@ -30,11 +32,14 @@ namespace BookRight.UseCases.Commands
             _behandlerRepository = behandlerRepository;
             _behandlingstypeRepository = behandlingstypeRepository;
             _bedsteRabatBeregner = bedsteRabatBeregner;
+            _kampagneRepository = kampagneRepository;
         }
 
         public async Task<OpretBookingResult> HandleAsync(OpretBookingCommand command)
         {
             var kunde = await _kundeRepository.HentPåIdAsync(command.KundeId);
+
+           
 
             var behandler = await _behandlerRepository
                 .HentMedDetaljerAsync(command.BehandlerId);
@@ -61,6 +66,9 @@ namespace BookRight.UseCases.Commands
             if (aktiveBookinger >= klinik.AntalRum)
                 return new OpretBookingResult { Success = false };
 
+            var bookingDato = DateOnly.FromDateTime(command.StartTid);
+            var aktiveKampagner = await _kampagneRepository.HentAktiveKampagnerAsync(bookingDato);
+
             // Handleren henter først data fra databasen med async/await.
             // Derefter bygger den context-objektet og sender det til rabatberegneren.
             var rabatContext = new RabatBeregningContext(
@@ -68,13 +76,9 @@ namespace BookRight.UseCases.Commands
                 BookingDato: DateOnly.FromDateTime(command.StartTid),
                 KundeFoedselsdato: kunde.Fødselsdato,
                 LoyalitetsNiveau: kunde.loyalitetsNiveau,
-                FoedselsdagsrabatBrugt: false, // Vi antager at fødselsdagsrabatten ikke er brugt,
-                                               // da vi ikke har information om tidligere bookinger i denne handler.
+                FoedselsdagsrabatBrugt: false, // Der skal laves kunde historik for at kunne tjekke dette, så det sættes til false for nu
                 Behandlingstyper: [MapTilBehandlingsType(behandlingstype)],
-                AktivKampagner: [] //Ikke brugt lige nu
-
-
-
+                AktivKampagner: aktiveKampagner
                 );
             
 

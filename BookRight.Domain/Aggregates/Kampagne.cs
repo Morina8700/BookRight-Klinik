@@ -34,5 +34,11 @@ namespace BookRight.Domain.Aggregates
             GaeldendeBehandlingstyper = gaeldendeBehandlingstyper;
             Aktiv = aktiv;
         }
+        private Kampagne()
+        {
+            Periode = null!;
+            Rabatprocent = null!;
+            GaeldendeBehandlingstyper = new List<BehandlingsType>();
+        }
     }
 }

@@ -4,6 +4,7 @@ using BookRight.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookRight.Infrastructure.Migrations
 {
     [DbContext(typeof(BookRightDbContext))]
-    partial class BookRightDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260506103528_AddKampagner")]
+    partial class AddKampagner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -635,15 +638,6 @@ namespace BookRight.Infrastructure.Migrations
                     b.HasKey("KampagneId");
 
                     b.ToTable("Kampagner");
-
-                    b.HasData(
-                        new
-                        {
-                            KampagneId = new Guid("cccccccc-0001-0000-0000-000000000000"),
-                            Aktiv = true,
-                            GaeldendeBehandlingstyper = "Fysioterapi",
-                            Navn = "Sommerkampagne fysioterapi"
-                        });
                 });
 
             modelBuilder.Entity("BookRight.Domain.Aggregates.Klinik", b =>
@@ -786,14 +780,6 @@ namespace BookRight.Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("KampagneId");
-
-                            b1.HasData(
-                                new
-                                {
-                                    KampagneId = new Guid("cccccccc-0001-0000-0000-000000000000"),
-                                    SlutDato = new DateOnly(2026, 6, 30),
-                                    StartDato = new DateOnly(2026, 6, 1)
-                                });
                         });
 
                     b.OwnsOne("BookRight.Domain.ValueObjects.RabatProcent", "Rabatprocent", b1 =>
@@ -812,13 +798,6 @@ namespace BookRight.Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("KampagneId");
-
-                            b1.HasData(
-                                new
-                                {
-                                    KampagneId = new Guid("cccccccc-0001-0000-0000-000000000000"),
-                                    Value = 20m
-                                });
                         });
 
                     b.Navigation("Periode")

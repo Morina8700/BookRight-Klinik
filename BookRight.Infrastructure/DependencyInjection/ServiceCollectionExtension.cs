@@ -24,6 +24,8 @@ namespace BookRight.Infrastructure.DependencyInjection
             services.AddScoped<IBehandlerRepository, BehandlerRepository>();
             services.AddScoped<IKlinikRepository, KlinikRepository>();
             services.AddScoped<IBehandlingstypeRepository, BehandlingstypeRepository>();
+            services.AddScoped<IKampagneRepository, KampagneRepository>();
+
 
             // Handlers
             services.AddScoped<OpretKundeHandler>();
