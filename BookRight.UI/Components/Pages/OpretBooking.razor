@@ -56,7 +56,7 @@
                             <label for="behandler">Behandler</label>
                             <select id="behandler" @onchange="OnBehandlerValgt">
                                 <option value="">-- Vælg behandler --</option>
-                                @foreach (var behandler in filtrerdeBehandlere)
+                                @foreach (var behandler in filtreredeBehandlere)
                                 {
                                     <option value="@behandler.BehandlerId">@behandler.FuldeNavn (@behandler.AutorisationsType)</option>
                                 }
@@ -73,7 +73,7 @@
                             <label for="behandlingstype">Behandlingstype</label>
                             <select id="behandlingstype" @onchange="OnBehandlingstypeValgt">
                                 <option value="">-- Vælg behandlingstype --</option>
-                                @foreach (var type in filtrerdeBehandlingstyper)
+                                @foreach (var type in filtreredeBehandlingstyper)
                                 {
                                     <option value="@type.BehandlingstypeId">@type.Navn – @type.Pris kr. (@type.VarighedMinutter min.)</option>
                                 }
@@ -127,8 +127,8 @@
     private List<KlinikDto> alleKlinikker = new();
     private List<KundeDto> alleKunder = new();
     private List<BehandlerDto> alleBehandlere = new();
-    private List<BehandlerDto> filtrerdeBehandlere = new();
-    private List<BehandlingstypeDto> filtrerdeBehandlingstyper = new();
+    private List<BehandlerDto> filtreredeBehandlere = new();
+    private List<BehandlingstypeDto> filtreredeBehandlingstyper = new();
 
     private Guid valgtKundeId = Guid.Empty;
     private Guid valgteKlinikId = Guid.Empty;
@@ -169,10 +169,10 @@
         valgteBehandlerId = Guid.Empty;
         valgteBehandlingstypeId = Guid.Empty;
         valgteBehandlingstype = null;
-        filtrerdeBehandlere = alleBehandlere
+        filtreredeBehandlere = alleBehandlere
             .Where(b => b.Klinikker.Any(k => k.KlinikId == valgteKlinikId))
             .ToList();
-        filtrerdeBehandlingstyper = new();
+        filtreredeBehandlingstyper = new();
     }
 
     private void OnBehandlerValgt(ChangeEventArgs e)
@@ -181,15 +181,15 @@
         valgteBehandlerId = id;
         valgteBehandlingstypeId = Guid.Empty;
         valgteBehandlingstype = null;
-        var behandler = filtrerdeBehandlere.FirstOrDefault(b => b.BehandlerId == valgteBehandlerId);
-        filtrerdeBehandlingstyper = behandler?.Behandlingstyper.ToList() ?? new();
+        var behandler = filtreredeBehandlere.FirstOrDefault(b => b.BehandlerId == valgteBehandlerId);
+        filtreredeBehandlingstyper = behandler?.Behandlingstyper.ToList() ?? new();
     }
 
     private void OnBehandlingstypeValgt(ChangeEventArgs e)
     {
         if (!Guid.TryParse(e.Value?.ToString(), out var id)) return;
         valgteBehandlingstypeId = id;
-        valgteBehandlingstype = filtrerdeBehandlingstyper
+        valgteBehandlingstype = filtreredeBehandlingstyper
             .FirstOrDefault(bt => bt.BehandlingstypeId == valgteBehandlingstypeId);
     }
 
@@ -206,18 +206,6 @@
                valgteBehandlerId != Guid.Empty &&
                valgteBehandlingstypeId != Guid.Empty &&
                valgtStartTid != TimeOnly.MinValue;
-    }
-
-    private async Task OnOpretBookingClicked()
-    {
-        if (!KanOprette())
-        {
-            besked = "Vælg kunde, klinik, behandler, behandlingstype og starttidspunkt før du opretter en booking.";
-            success = false;
-            return;
-        }
-
-        await OpretBookingAsync();
     }
 
     private async Task OpretBookingAsync()
