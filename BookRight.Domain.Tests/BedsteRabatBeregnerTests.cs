@@ -8,7 +8,7 @@ namespace BookRight.Domain.Tests
     public class BedsteRabatBeregnerTests
     {
         [Fact]
-        public async Task BeregnBedsteRabatAsync_FlereRelevanteRabatter_VaelgerLavestePris()
+        public async Task BeregnBedsteRabat_FlereRelevanteRabatter_VaelgerLavestePris()
         {
             var beregner = new BedsteRabatBeregner(
             [
@@ -36,15 +36,15 @@ namespace BookRight.Domain.Tests
                         gaeldendeBehandlingstyper: [BehandlingsType.Sportsmassage])
                 ]);
 
-            var resultat = await beregner.BeregnBedsteRabatAsync(context);
+            var resultat = beregner.BeregnBedsteRabat(context);
 
-            Assert.Equal(RabatType.Foedselsdag, resultat.RabatType);
+            Assert.Equal(RabatType.Fødselsdag, resultat.RabatType);
             Assert.Equal(25, resultat.RabatProcent.Value);
             Assert.Equal(750, resultat.PrisMedRabat.Belob);
         }
 
         [Fact]
-        public async Task BeregnBedsteRabatAsync_UdenStrategier_ReturnererIngenRabat()
+        public async Task BeregnBedsteRabat_UdenStrategier_ReturnererIngenRabat()
         {
             var beregner = new BedsteRabatBeregner([]);
             var context = new RabatBeregningContext(
@@ -56,7 +56,7 @@ namespace BookRight.Domain.Tests
                 Behandlingstyper: [],
                 AktivKampagner: []);
 
-            var resultat = await beregner.BeregnBedsteRabatAsync(context);
+            var resultat = beregner.BeregnBedsteRabat(context);
 
             Assert.Equal(RabatType.Ingen, resultat.RabatType);
             Assert.Equal(0, resultat.RabatProcent.Value);

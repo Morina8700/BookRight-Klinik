@@ -17,6 +17,10 @@ namespace BookRight.Domain.ValueObjects
             Value = value;
         }
 
+        private RabatProcent() // For EF Core
+            {
+        }
+
 
     }
 }

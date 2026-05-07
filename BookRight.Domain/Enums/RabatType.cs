@@ -8,7 +8,7 @@ namespace BookRight.Domain.Enums
     {
         Ingen,
         Loyalitet,
-        Foedselsdag,
+        Fødselsdag,
         Kampagne
 
     }

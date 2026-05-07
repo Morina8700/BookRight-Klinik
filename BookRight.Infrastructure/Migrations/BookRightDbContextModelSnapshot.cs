@@ -615,6 +615,37 @@ namespace BookRight.Infrastructure.Migrations
                     b.ToTable("Bookinger");
                 });
 
+            modelBuilder.Entity("BookRight.Domain.Aggregates.Kampagne", b =>
+                {
+                    b.Property<Guid>("KampagneId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Aktiv")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("GaeldendeBehandlingstyper")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Navn")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("KampagneId");
+
+                    b.ToTable("Kampagner");
+
+                    b.HasData(
+                        new
+                        {
+                            KampagneId = new Guid("cccccccc-0001-0000-0000-000000000000"),
+                            Aktiv = true,
+                            GaeldendeBehandlingstyper = "Fysioterapi",
+                            Navn = "Sommerkampagne fysioterapi"
+                        });
+                });
+
             modelBuilder.Entity("BookRight.Domain.Aggregates.Klinik", b =>
                 {
                     b.Property<Guid>("KlinikId")
@@ -731,6 +762,69 @@ namespace BookRight.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("KlinikkerKlinikId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BookRight.Domain.Aggregates.Kampagne", b =>
+                {
+                    b.OwnsOne("BookRight.Domain.ValueObjects.KampagnePeriode", "Periode", b1 =>
+                        {
+                            b1.Property<Guid>("KampagneId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateOnly>("SlutDato")
+                                .HasColumnType("date")
+                                .HasColumnName("SlutDato");
+
+                            b1.Property<DateOnly>("StartDato")
+                                .HasColumnType("date")
+                                .HasColumnName("StartDato");
+
+                            b1.HasKey("KampagneId");
+
+                            b1.ToTable("Kampagner");
+
+                            b1.WithOwner()
+                                .HasForeignKey("KampagneId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    KampagneId = new Guid("cccccccc-0001-0000-0000-000000000000"),
+                                    SlutDato = new DateOnly(2026, 6, 30),
+                                    StartDato = new DateOnly(2026, 6, 1)
+                                });
+                        });
+
+                    b.OwnsOne("BookRight.Domain.ValueObjects.RabatProcent", "Rabatprocent", b1 =>
+                        {
+                            b1.Property<Guid>("KampagneId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Value")
+                                .HasPrecision(5, 2)
+                                .HasColumnType("decimal(5,2)")
+                                .HasColumnName("RabatProcent");
+
+                            b1.HasKey("KampagneId");
+
+                            b1.ToTable("Kampagner");
+
+                            b1.WithOwner()
+                                .HasForeignKey("KampagneId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    KampagneId = new Guid("cccccccc-0001-0000-0000-000000000000"),
+                                    Value = 20m
+                                });
+                        });
+
+                    b.Navigation("Periode")
+                        .IsRequired();
+
+                    b.Navigation("Rabatprocent")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

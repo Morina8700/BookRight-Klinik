@@ -21,5 +21,8 @@ namespace BookRight.Domain.ValueObjects
         {
             return dato >= StartDato && dato <= SlutDato;
         }
+        private KampagnePeriode() // For EF Core
+        {
+        }
     }
 }
