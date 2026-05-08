@@ -12,7 +12,7 @@ namespace BookRight.UseCases.Commands
         private readonly IKlinikRepository _klinikRepository;
         private readonly IBehandlerRepository _behandlerRepository;
         private readonly IBehandlingstypeRepository _behandlingstypeRepository;
-        private readonly BedsteRabatBeregner _bedsteRabatBeregner;
+        private readonly RabatBeregnerService _rabatBeregner;
         private readonly IKundeRepository _kundeRepository;
         private readonly IKampagneRepository _kampagneRepository;
 
@@ -21,7 +21,7 @@ namespace BookRight.UseCases.Commands
             IKlinikRepository klinikRepository,
             IBehandlerRepository behandlerRepository,
             IBehandlingstypeRepository behandlingstypeRepository,
-            BedsteRabatBeregner bedsteRabatBeregner,
+            RabatBeregnerService rabatBeregner,
             IKundeRepository kundeRepository,
             IKampagneRepository kampagneRepository
             )
@@ -31,7 +31,7 @@ namespace BookRight.UseCases.Commands
             _klinikRepository = klinikRepository;
             _behandlerRepository = behandlerRepository;
             _behandlingstypeRepository = behandlingstypeRepository;
-            _bedsteRabatBeregner = bedsteRabatBeregner;
+            _rabatBeregner = rabatBeregner;
             _kampagneRepository = kampagneRepository;
         }
 
@@ -39,7 +39,8 @@ namespace BookRight.UseCases.Commands
         {
             var kunde = await _kundeRepository.HentPåIdAsync(command.KundeId);
 
-           
+            if (kunde is null)
+                return new OpretBookingResult { Success = false };
 
             var behandler = await _behandlerRepository
                 .HentMedDetaljerAsync(command.BehandlerId);
@@ -66,11 +67,12 @@ namespace BookRight.UseCases.Commands
             if (aktiveBookinger >= klinik.AntalRum)
                 return new OpretBookingResult { Success = false };
 
+            // I/O-bound arbejde: kampagner hentes fra databasen før rabatberegningen starter.
             var bookingDato = DateOnly.FromDateTime(command.StartTid);
             var aktiveKampagner = await _kampagneRepository.HentAktiveKampagnerAsync(bookingDato);
 
-            // Handleren henter først data fra databasen med async/await.
-            // Derefter bygger den context-objektet og sender det til rabatberegneren.
+            // Context samler alle oplysninger, som strategierne skal bruge.
+            // Derfor skal rabatstrategierne ikke selv hente data fra databasen.
             var rabatContext = new RabatBeregningContext(
                 PrisUdenRabat: new Penge(behandlingstype.Pris),
                 BookingDato: DateOnly.FromDateTime(command.StartTid),
@@ -80,9 +82,9 @@ namespace BookRight.UseCases.Commands
                 Behandlingstyper: [MapTilBehandlingsType(behandlingstype)],
                 AktivKampagner: aktiveKampagner
                 );
-            
 
-            var rabatResultat = _bedsteRabatBeregner.BeregnBedsteRabat(rabatContext);
+            // CPU-bound arbejde: loyalitet, fødselsdag og kampagne beregnes parallelt i rabatservicen.
+            var rabatResultat = await _rabatBeregner.BeregnBedsteRabatAsync(rabatContext);
 
             var booking = new Booking(
                 command.KundeId,

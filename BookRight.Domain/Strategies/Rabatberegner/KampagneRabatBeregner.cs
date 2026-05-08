@@ -8,7 +8,8 @@ namespace BookRight.Domain.Strategies.Rabatberegner
 {
     public class KampagneRabatBeregner : IRabatBeregner
     {
-        public RabatResultat BeregnRabat(RabatBeregningContext context)
+        // Kampagnestrategien finder den bedste aktive kampagne, der matcher dato og behandlingstype.
+        public void BeregnRabat(RabatBeregningContext context, RabatResultat resultat)
         {
            var kampagne = context.AktivKampagner
                 .Where(k => k.Aktiv) // Sikrer at kampagnen er markeret som aktiv
@@ -20,25 +21,16 @@ namespace BookRight.Domain.Strategies.Rabatberegner
 
             if (kampagne is null) // Hvis der ikke er nogen kampagne, der opfylder kriterierne, returnerer vi et resultat med ingen rabat
             {
-                var ingenRabat = new RabatProcent(0);
-                return new RabatResultat(
-                    RabatType.Ingen,
-                    ingenRabat,
-                    context.PrisUdenRabat,
-                    context.PrisUdenRabat
-                    );
-                
-
-
-                
+                return;
             }
 
             var prisMedRabat = context.PrisUdenRabat.FratraekRabat(kampagne.Rabatprocent); // Beregner prisen efter rabat ved at trække kampagnens rabatprocent fra den oprindelige pris
-            return new RabatResultat(
+
+            resultat.OpdaterHvisBedre(
                 RabatType.Kampagne,
                 kampagne.Rabatprocent,
-                context.PrisUdenRabat,
                 prisMedRabat
+
                 );
         }
     }

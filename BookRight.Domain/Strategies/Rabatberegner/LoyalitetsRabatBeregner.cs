@@ -8,7 +8,7 @@ namespace BookRight.Domain.Strategies.Rabatberegner
 {
     public class LoyalitetsRabatBeregner : IRabatBeregner
     {
-        public RabatResultat BeregnRabat(RabatBeregningContext context)
+        public void BeregnRabat(RabatBeregningContext context, RabatResultat resultat)
         {
             // Loyalitetsstrategien kigger på kundens loyalitetsniveau
             // og giver en rabat baseret på det niveau.
@@ -21,14 +21,20 @@ namespace BookRight.Domain.Strategies.Rabatberegner
                 _ => new RabatProcent(0)
             };
 
+            if (rabatProcent.Value == 0)
+                return;
+
             var prisMedRabat = context.PrisUdenRabat.FratraekRabat(rabatProcent);
 
-            return new RabatResultat(
-                rabatProcent.Value == 0 ? RabatType.Ingen : RabatType.Loyalitet,
+            resultat.OpdaterHvisBedre(
+                RabatType.Loyalitet,
                 rabatProcent,
-                context.PrisUdenRabat,
                 prisMedRabat
-            );
+
+                );
+
+
+           
         }
     }
 }

@@ -10,6 +10,7 @@ public class FoedselsdagsRabatberegnerTests
     public void BeregnRabat_BookingIFoedselsmaaned_ReturnererRabat()
     {
         var beregner = new FoedselsdagsRabatBeregner();
+        var resultat = new RabatResultat(new Penge(1000));
 
         var context = new RabatBeregningContext(
             PrisUdenRabat: new Penge(1000),
@@ -20,7 +21,7 @@ public class FoedselsdagsRabatberegnerTests
             Behandlingstyper: [],
             AktivKampagner: []);
 
-        var resultat = beregner.BeregnRabat(context);
+        beregner.BeregnRabat(context, resultat);
 
         Assert.Equal(RabatType.Fødselsdag, resultat.RabatType);
         Assert.Equal(25, resultat.RabatProcent.Value);
@@ -31,6 +32,7 @@ public class FoedselsdagsRabatberegnerTests
     public void BeregnRabat_BookingIkkeIFoedselsmaaned_ReturnererIngenRabat()
     {
         var beregner = new FoedselsdagsRabatBeregner();
+        var resultat = new RabatResultat(new Penge(1000));
 
         var context = new RabatBeregningContext(
             PrisUdenRabat: new Penge(1000),
@@ -41,7 +43,7 @@ public class FoedselsdagsRabatberegnerTests
             Behandlingstyper: [],
             AktivKampagner: []);
 
-        var resultat = beregner.BeregnRabat(context);
+        beregner.BeregnRabat(context, resultat);
 
         Assert.Equal(RabatType.Ingen, resultat.RabatType);
         Assert.Equal(0, resultat.RabatProcent.Value);
@@ -53,6 +55,7 @@ public class FoedselsdagsRabatberegnerTests
     public void BeregnRabat_FoedselsdagsrabatAlleredeBrugt_ReturnererIngenRabat()
     {
         var beregner = new FoedselsdagsRabatBeregner();
+        var resultat = new RabatResultat(new Penge(1000));
 
         var context = new RabatBeregningContext(
             PrisUdenRabat: new Penge(1000),
@@ -63,7 +66,7 @@ public class FoedselsdagsRabatberegnerTests
             Behandlingstyper: [],
             AktivKampagner: []);
 
-        var resultat = beregner.BeregnRabat(context);
+        beregner.BeregnRabat(context, resultat);
 
         Assert.Equal(RabatType.Ingen, resultat.RabatType);
         Assert.Equal(0, resultat.RabatProcent.Value);

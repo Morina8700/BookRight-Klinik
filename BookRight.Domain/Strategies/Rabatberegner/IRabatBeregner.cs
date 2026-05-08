@@ -4,10 +4,10 @@ using System.Text;
 
 namespace BookRight.Domain.Strategies.Rabatberegner
 {
-    // Interface for rabatberegner strategier
-    // Alle rabattyper følger samme interface
+    // Alle rabatstrategier får samme context og samme resultatobjekt.
+    // Strategien returnerer ikke selv resultatet, men forsøger at opdatere det fælles resultat.
     public interface IRabatBeregner
     {
-        RabatResultat BeregnRabat(RabatBeregningContext context);
+        void BeregnRabat(RabatBeregningContext context, RabatResultat resultat);
     }
 }

@@ -49,6 +49,7 @@ namespace BookRight.Domain.Tests
         private static RabatResultat BeregnFor(LoyalitetsNiveau loyalitetsNiveau)
         {
             var beregner = new LoyalitetsRabatBeregner();
+            var resultat = new RabatResultat(new Penge(1000));
 
             var context = new RabatBeregningContext(
                 PrisUdenRabat: new Penge(1000),
@@ -59,7 +60,9 @@ namespace BookRight.Domain.Tests
                 Behandlingstyper: [],
                 AktivKampagner: []);
 
-            return beregner.BeregnRabat(context);
+            beregner.BeregnRabat(context, resultat);
+
+            return resultat;
         }
     }
 }

@@ -12,10 +12,10 @@ namespace BookRight.Domain.Tests
         {
             var beregner = new KampagneRabatBeregner();
             var kampagne = OpretKampagne(20);
-
+            var resultat = new RabatResultat(new Penge(1000));
             var context = OpretContext([kampagne]);
 
-            var resultat = beregner.BeregnRabat(context);
+            beregner.BeregnRabat(context, resultat);
 
             Assert.NotEqual(Guid.Empty, kampagne.KampagneId);
             Assert.Equal(RabatType.Kampagne, resultat.RabatType);
@@ -29,10 +29,10 @@ namespace BookRight.Domain.Tests
         {
             var beregner = new KampagneRabatBeregner();
             var kampagne = OpretKampagne(20, aktiv: false);
-
+            var resultat = new RabatResultat(new Penge(1000));
             var context = OpretContext([kampagne]);
 
-            var resultat = beregner.BeregnRabat(context);
+            beregner.BeregnRabat(context, resultat);
 
             Assert.Equal(RabatType.Ingen, resultat.RabatType);
             Assert.Equal(0, resultat.RabatProcent.Value);
@@ -45,10 +45,10 @@ namespace BookRight.Domain.Tests
             var beregner = new KampagneRabatBeregner();
             var kampagneMed10Procent = OpretKampagne(10);
             var kampagneMed30Procent = OpretKampagne(30);
-
+            var resultat = new RabatResultat(new Penge(1000));
             var context = OpretContext([kampagneMed10Procent, kampagneMed30Procent]);
 
-            var resultat = beregner.BeregnRabat(context);
+            beregner.BeregnRabat(context, resultat);
 
             Assert.Equal(RabatType.Kampagne, resultat.RabatType);
             Assert.Equal(30, resultat.RabatProcent.Value);
