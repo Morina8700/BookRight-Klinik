@@ -3,7 +3,9 @@
 @using BookRight.Facade.Contracts.Bookinger
 @using BookRight.Facade.Contracts.Kunder
 @using BookRight.Facade.Interfaces
+@using BookRight.Domain.Interfaces
 @inject IBookingFacade BookingFacade
+@inject IKundeRepository KundeRepository
 
 <main class="opret-booking-side">
     <article class="opret-booking-kort" aria-labelledby="opret-booking-heading">
@@ -58,7 +60,7 @@
                                 <option value="">-- Vælg behandler --</option>
                                 @foreach (var behandler in filtreredeBehandlere)
                                 {
-                                    <option value="@behandler.BehandlerId">@behandler.FuldeNavn (@behandler.AutorisationsType)</option>
+                                    <option value="@behandler.BehandlerId">@behandler.Fornavn @behandler.Efternavn</option>
                                 }
                             </select>
                         </div>
@@ -75,7 +77,7 @@
                                 <option value="">-- Vælg behandlingstype --</option>
                                 @foreach (var type in filtreredeBehandlingstyper)
                                 {
-                                    <option value="@type.BehandlingstypeId">@type.Navn – @type.Pris kr. (@type.VarighedMinutter min.)</option>
+                                    <option value="@type.BehandlingstypeId">@type.Navn – @type.Pris kr.</option>
                                 }
                             </select>
                         </div>
@@ -94,6 +96,10 @@
                             <div class="formular-felt">
                                 <label for="starttid">Starttidspunkt</label>
                                 <input id="starttid" type="time" @bind="valgtStartTid" />
+                            </div>
+                            <div class="formular-felt">
+                                <label for="sluttid">Sluttidspunkt</label>
+                                <input id="sluttid" type="time" @bind="valgtSlutTid" />
                             </div>
                         </div>
                     </div>
@@ -139,6 +145,7 @@
     private List<KlinikDto> alleKlinikker = new();
     private List<KundeDto> alleKunder = new();
     private List<BehandlerDto> alleBehandlere = new();
+    private List<BehandlingstypeDto> alleBehandlingstyper = new();
     private List<BehandlerDto> filtreredeBehandlere = new();
     private List<BehandlingstypeDto> filtreredeBehandlingstyper = new();
 
@@ -151,6 +158,7 @@
 
     private DateOnly valgtDato = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly valgtStartTid = TimeOnly.MinValue;
+    private TimeOnly valgtSlutTid = TimeOnly.MinValue;
 
     private bool isLoading = true;
     private string besked = "";
@@ -158,9 +166,20 @@
 
     protected override async Task OnInitializedAsync()
     {
-        alleKunder = (await BookingFacade.HentAlleKunderAsync()).ToList();
+        var kunder = await KundeRepository.HentAlleAsync();
+
+        alleKunder = kunder.Select(k => new KundeDto
+        {
+            KundeId = k.KundeId,
+            FuldeNavn = $"{k.Fornavn} {k.Efternavn}",
+            Email = k.Email,
+            Telefon = k.Telefon,
+            LoyalitetsNiveau = k.loyalitetsNiveau.ToString()
+        }).ToList();
+
         alleKlinikker = (await BookingFacade.HentAlleKlinikkerAsync()).ToList();
         alleBehandlere = (await BookingFacade.HentAlleBehandlereAsync()).ToList();
+        alleBehandlingstyper = (await BookingFacade.HentAlleBehandlingstyperAsync()).ToList();
         isLoading = false;
     }
 
@@ -183,7 +202,7 @@
         valgteBehandlingstypeId = Guid.Empty;
         valgteBehandlingstype = null;
         filtreredeBehandlere = alleBehandlere
-            .Where(b => b.Klinikker.Any(k => k.KlinikId == valgteKlinikId))
+            .Where(b => b.KlinikIds.Contains(valgteKlinikId))
             .ToList();
         filtreredeBehandlingstyper = new();
     }
@@ -194,8 +213,12 @@
         valgteBehandlerId = id;
         valgteBehandlingstypeId = Guid.Empty;
         valgteBehandlingstype = null;
-        var behandler = filtreredeBehandlere.FirstOrDefault(b => b.BehandlerId == valgteBehandlerId);
-        filtreredeBehandlingstyper = behandler?.Behandlingstyper.ToList() ?? new();
+        var behandler = filtreredeBehandlere
+            .FirstOrDefault(b => b.BehandlerId == valgteBehandlerId);
+
+        filtreredeBehandlingstyper = alleBehandlingstyper
+            .Where(bt => behandler?.BehandlingstypeIds.Contains(bt.BehandlingstypeId) == true)
+            .ToList();
     }
 
     private void OnBehandlingstypeValgt(ChangeEventArgs e)
@@ -208,8 +231,7 @@
 
     private DateTime BeregnSlutTid()
     {
-        var start = valgtDato.ToDateTime(valgtStartTid);
-        return start.AddMinutes(valgteBehandlingstype?.VarighedMinutter ?? 0);
+        return valgtDato.ToDateTime(valgtSlutTid);
     }
 
     private bool KanOprette()
@@ -218,7 +240,8 @@
                valgteKlinikId != Guid.Empty &&
                valgteBehandlerId != Guid.Empty &&
                valgteBehandlingstypeId != Guid.Empty &&
-               valgtStartTid != TimeOnly.MinValue;
+               valgtStartTid != TimeOnly.MinValue &&
+               valgtSlutTid != TimeOnly.MinValue;
     }
 
     private async Task OpretBookingAsync()
@@ -239,7 +262,6 @@
 
         var startTid = valgtDato.ToDateTime(valgtStartTid);
         var slutTid = BeregnSlutTid();
-        var pris = valgteBehandlingstype.Pris;
 
         var request = new OpretBookingRequest
         {
@@ -248,16 +270,22 @@
             KlinikId = valgteKlinikId,
             BehandlingstypeId = valgteBehandlingstypeId,
             StartTid = startTid,
-            SlutTid = slutTid,
-            PrisUdenRabat = pris,
-            PrisMedRabat = pris,
-            AnvendtRabatType = null
+            SlutTid = slutTid
         };
 
-        var response = await BookingFacade.OpretBookingAsync(request);
+        try
+        {
+            var response = await BookingFacade.OpretBookingAsync(request);
 
-        senesteBookingResponse = response;
-        besked = response.Message;
-        success = response.Success;
+            senesteBookingResponse = response;
+            besked = response.Besked ?? "Booking oprettet";
+            success = response.Success;
+        }
+        catch (Exception ex)
+        {
+            senesteBookingResponse = null;
+            besked = ex.Message;
+            success = false;
+        }
     }
 }

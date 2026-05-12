@@ -4,7 +4,7 @@ namespace BookRight.Domain.Interfaces
 {
     public interface IKlinikRepository
     {
-        Task<Klinik> HentAsync(Guid klinikId);
+        Task<Klinik?> HentEfterIdAsync(Guid klinikId);
         Task<IEnumerable<Klinik>> HentAlleAsync();
     }
 }

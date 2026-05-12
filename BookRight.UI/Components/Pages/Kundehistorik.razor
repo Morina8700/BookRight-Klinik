@@ -3,7 +3,9 @@
 @using BookRight.Facade.Contracts.Bookinger
 @using BookRight.Facade.Contracts.Kunder
 @using BookRight.Facade.Interfaces
+@using BookRight.Domain.Interfaces
 @inject IBookingFacade BookingFacade
+@inject IKundeRepository KundeRepository
 
 <main class="opret-booking-side">
     <article class="opret-booking-kort" aria-labelledby="kundehistorik-heading">
@@ -34,40 +36,7 @@
 
                 @if (valgtKundeId != Guid.Empty)
                 {
-                    @if (historikPoster.Count == 0)
-                    {
-                        <p>Ingen historik fundet for den valgte kunde.</p>
-                    }
-                    else
-                    {
-                        <div class="formular-sektion">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Start</th>
-                                        <th>Slut</th>
-                                        <th>Klinik</th>
-                                        <th>Behandler</th>
-                                        <th>Behandlingstype</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var post in historikPoster)
-                                    {
-                                        <tr>
-                                            <td>@post.StartTid.ToString("dd-MM-yyyy HH:mm")</td>
-                                            <td>@post.SlutTid.ToString("dd-MM-yyyy HH:mm")</td>
-                                            <td>@post.KlinikNavn</td>
-                                            <td>@post.BehandlerNavn</td>
-                                            <td>@post.BehandlingstypeNavn</td>
-                                            <td>@post.Status</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
+                    <p>Kundehistorik er ikke implementeret endnu.</p>
                 }
             </div>
         }
@@ -76,26 +45,33 @@
 
 @code {
     private List<KundeDto> alleKunder = new();
-    private List<KundehistorikDto> historikPoster = new();
     private Guid valgtKundeId = Guid.Empty;
     private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        alleKunder = (await BookingFacade.HentAlleKunderAsync()).ToList();
+        var kunder = await KundeRepository.HentAlleAsync();
+
+        alleKunder = kunder.Select(k => new KundeDto
+        {
+            KundeId = k.KundeId,
+            FuldeNavn = $"{k.Fornavn} {k.Efternavn}",
+            Email = k.Email,
+            Telefon = k.Telefon,
+            LoyalitetsNiveau = k.loyalitetsNiveau.ToString()
+        }).ToList();
+
         isLoading = false;
     }
 
-    private async Task OnKundeValgt(ChangeEventArgs e)
+    private void OnKundeValgt(ChangeEventArgs e)
     {
         if (!Guid.TryParse(e.Value?.ToString(), out var kundeId))
         {
             valgtKundeId = Guid.Empty;
-            historikPoster = new();
             return;
         }
 
         valgtKundeId = kundeId;
-        historikPoster = (await BookingFacade.HentKundehistorikAsync(valgtKundeId)).ToList();
     }
 }

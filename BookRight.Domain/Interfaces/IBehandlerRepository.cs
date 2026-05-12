@@ -4,7 +4,7 @@ namespace BookRight.Domain.Interfaces
 {
     public interface IBehandlerRepository
     {
-        Task<Behandler> HentMedDetaljerAsync(Guid behandlerId);
+        Task<Behandler?> HentEfterIdAsync(Guid behandlerId);
         Task<IEnumerable<Behandler>> HentAlleAsync();
     }
 }

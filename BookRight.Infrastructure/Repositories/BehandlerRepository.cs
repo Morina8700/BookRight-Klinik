@@ -8,14 +8,13 @@ namespace BookRight.Infrastructure.Repositories
     public class BehandlerRepository : IBehandlerRepository
     {
         private readonly BookRightDbContext _context;
-
-        public BehandlerRepository(BookRightDbContext context)
+        public BehandlerRepository(BookRightDbContext context) 
         {
             _context = context;
         }
 
-        // Include henter de relaterede lister med – ellers er Klinikker og Behandlingstyper tomme
-        public async Task<Behandler> HentMedDetaljerAsync(Guid behandlerId)
+        // Henter en behandler med de klinikker og behandlingstyper, der skal bruges til validering
+        public async Task<Behandler?> HentEfterIdAsync(Guid behandlerId) 
         {
             return await _context.Behandlere
                 .Include(b => b.Klinikker)
@@ -23,6 +22,7 @@ namespace BookRight.Infrastructure.Repositories
                 .FirstOrDefaultAsync(b => b.BehandlerId == behandlerId);
         }
 
+        // Henter alle behandlere med deres klinikker og behandlingstyper
         public async Task<IEnumerable<Behandler>> HentAlleAsync()
         {
             return await _context.Behandlere

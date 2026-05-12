@@ -6,6 +6,7 @@ using BookRight.Domain.ValueObjects;
 
 namespace BookRight.UseCases.Commands
 {
+    // Udfører forretningslogikken for at oprette en booking
     public class OpretBookingHandler
     {
         private readonly IBookingRepository _bookingRepository;
@@ -37,55 +38,50 @@ namespace BookRight.UseCases.Commands
 
         public async Task<OpretBookingResult> HandleAsync(OpretBookingCommand command)
         {
-            var kunde = await _kundeRepository.HentPåIdAsync(command.KundeId);
+            // 1. Hent alle nødvendige data fra repositories
+            var klinik = await _klinikRepository.HentEfterIdAsync(command.KlinikId)
+            ?? throw new InvalidOperationException("Klinik ikke fundet");
 
-            if (kunde is null)
-                return new OpretBookingResult { Success = false };
+            var behandler = await _behandlerRepository.HentEfterIdAsync(command.BehandlerId)
+            ?? throw new InvalidOperationException("Behandler ikke fundet");
 
-            var behandler = await _behandlerRepository
-                .HentMedDetaljerAsync(command.BehandlerId);
+            var behandlingstype = await _behandlingstypeRepository.HentEfterIdAsync(command.BehandlingstypeId)
+            ?? throw new InvalidOperationException("Behandlingstype ikke fundet");
 
-            var behandlingstype = await _behandlingstypeRepository
-                .HentAsync(command.BehandlingstypeId);
+            var kunde = await _kundeRepository.HentPåIdAsync(command.KundeId)
+            ?? throw new InvalidOperationException("Kunde ikke fundet");
 
+            // 2. Valider at behandleren arbejder på den valgte klinik
             if (!behandler.ArbejderPå(command.KlinikId))
-                return new OpretBookingResult { Success = false };
+                throw new InvalidOperationException("Behandler arbejder ikke på den valgte klinik");
 
+            // 3. Valider at behandleren er autoriseret til behandlingstypen 
             if (!behandler.KanUdføre(behandlingstype))
-                return new OpretBookingResult { Success = false };
+                throw new InvalidOperationException("Behandler er ikke autoriseret til behandlingstypen");
 
-            var behandlerLedig = await _bookingRepository
-                .ErBehandlerLedigAsync(command.BehandlerId, command.StartTid, command.SlutTid);
+            // 4. Valider at behandleren ikke er dobbeltbooket
+            bool erLedig = await _bookingRepository.ErBehandlerLedigAsync(command.BehandlerId, command.StartTid, command.SlutTid);
+            if (!erLedig) throw new InvalidOperationException("Behandler er allerede booket i dette tidsrum");
 
-            if (!behandlerLedig)
-                return new OpretBookingResult { Success = false };
+            // 5. Valider at klinikken har ledige rum
+            var aktiveBookinger = await _bookingRepository.HentAntalOverlappendeBookingerAsync(
+            command.KlinikId, command.StartTid, command.SlutTid);
+            if (!klinik.HarLedigeRum(aktiveBookinger))
+                throw new InvalidOperationException("Klinikken har ingen ledige rum i det valgte tidsrum");
 
-            var klinik = await _klinikRepository.HentAsync(command.KlinikId);
-            var aktiveBookinger = await _bookingRepository
-                .HentAntalAktiveBookingerAsync(command.KlinikId, command.StartTid, command.SlutTid);
+            // 6. Hent aktive kampagner og beregn bedste rabat (CPU-bound parallelisme)
+            var aktiveKampagner = await _kampagneRepository.HentAktiveKampagnerAsync(DateOnly.FromDateTime(command.StartTid));
+            var rabatBeregningContext = new RabatBeregningContext(
+                new Penge(behandlingstype.Pris),
+                DateOnly.FromDateTime(command.StartTid),
+                kunde.Fødselsdato,
+                kunde.loyalitetsNiveau,
+                false,
+                new List<BehandlingsType> {BehandlingsType.Fysioterapi},
+                aktiveKampagner);
+            var rabatResultat = await _rabatBeregner.BeregnBedsteRabatAsync(rabatBeregningContext);
 
-            if (aktiveBookinger >= klinik.AntalRum)
-                return new OpretBookingResult { Success = false };
-
-            // I/O-bound arbejde: kampagner hentes fra databasen før rabatberegningen starter.
-            var bookingDato = DateOnly.FromDateTime(command.StartTid);
-            var aktiveKampagner = await _kampagneRepository.HentAktiveKampagnerAsync(bookingDato);
-
-            // Context samler alle oplysninger, som strategierne skal bruge.
-            // Derfor skal rabatstrategierne ikke selv hente data fra databasen.
-            var rabatContext = new RabatBeregningContext(
-                PrisUdenRabat: new Penge(behandlingstype.Pris),
-                BookingDato: DateOnly.FromDateTime(command.StartTid),
-                KundeFoedselsdato: kunde.Fødselsdato,
-                LoyalitetsNiveau: kunde.loyalitetsNiveau,
-                FoedselsdagsrabatBrugt: false, // Der skal laves kunde historik for at kunne tjekke dette, så det sættes til false for nu
-                Behandlingstyper: [MapTilBehandlingsType(behandlingstype)],
-                AktivKampagner: aktiveKampagner
-                );
-
-            // CPU-bound arbejde: loyalitet, fødselsdag og kampagne beregnes parallelt i rabatservicen.
-            var rabatResultat = await _rabatBeregner.BeregnBedsteRabatAsync(rabatContext);
-
+            // 7. Opret booking 
             var booking = new Booking(
                 command.KundeId,
                 command.BehandlerId,
@@ -95,11 +91,12 @@ namespace BookRight.UseCases.Commands
                 command.SlutTid,
                 rabatResultat.PrisUdenRabat.Belob,
                 rabatResultat.PrisMedRabat.Belob,
-                rabatResultat.RabatType.ToString(),
-                command.KampagneId
-            );
+                rabatResultat.RabatType.ToString());
 
+            // 8. Gem booking 
             await _bookingRepository.AddAsync(booking);
+            
+            // 9. Returner resultat til Facade
             return new OpretBookingResult
             {
                 Success = true,
@@ -107,27 +104,6 @@ namespace BookRight.UseCases.Commands
                 PrisMedRabat = rabatResultat.PrisMedRabat.Belob,
                 AnvendtRabatType = rabatResultat.RabatType.ToString()
             };
-        }
-
-        private static BehandlingsType MapTilBehandlingsType(Behandlingstype behandlingstype)
-        {
-            if (behandlingstype.Navn.Contains("Fysioterapi", StringComparison.OrdinalIgnoreCase))
-                return BehandlingsType.Fysioterapi;
-
-            if (behandlingstype.Navn.Contains("Sportsmassage", StringComparison.OrdinalIgnoreCase))
-                return BehandlingsType.Sportsmassage;
-
-            if (behandlingstype.Navn.Contains("Akupunktur", StringComparison.OrdinalIgnoreCase))
-                return BehandlingsType.Akupunktur;
-
-            if (behandlingstype.Navn.Contains("Kostvejledning", StringComparison.OrdinalIgnoreCase))
-                return BehandlingsType.Kostvejledning;
-
-            if (behandlingstype.Navn.Contains("Holdtræning", StringComparison.OrdinalIgnoreCase) ||
-                behandlingstype.Navn.Contains("genoptræning", StringComparison.OrdinalIgnoreCase))
-                return BehandlingsType.Holdtræning;
-
-            throw new InvalidOperationException($"Ukendt behandlingstype: {behandlingstype.Navn}");
         }
     }
 }

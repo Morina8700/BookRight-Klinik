@@ -4,8 +4,8 @@
     {
         Aktiv,
         Aflyst,
+        Ankommet,
         Afsluttet,
-        NoShow,
-        Ankommet
+        NoShow
     }
 }

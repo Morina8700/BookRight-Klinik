@@ -1,15 +1,13 @@
 ﻿using BookRight.Facade.Contracts.Bookinger;
-using BookRight.Facade.Contracts.Kunder;
 
 namespace BookRight.Facade.Interfaces
 {
+    // Definerer de bookingfunktioner som UI/API kan kalde
     public interface IBookingFacade
     {
         Task<BookingResponse> OpretBookingAsync(OpretBookingRequest request);
-        Task<IEnumerable<KundeDto>> HentAlleKunderAsync();
-        Task<IEnumerable<KundehistorikDto>> HentKundehistorikAsync(Guid kundeId);
-        Task<IEnumerable<BehandlerDto>> HentAlleBehandlereAsync();
         Task<IEnumerable<KlinikDto>> HentAlleKlinikkerAsync();
+        Task<IEnumerable<BehandlerDto>> HentAlleBehandlereAsync();
         Task<IEnumerable<BehandlingstypeDto>> HentAlleBehandlingstyperAsync();
     }
 }
