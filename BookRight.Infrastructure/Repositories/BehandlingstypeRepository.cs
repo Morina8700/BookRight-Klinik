@@ -8,18 +8,19 @@ namespace BookRight.Infrastructure.Repositories
     public class BehandlingstypeRepository : IBehandlingstypeRepository
     {
         private readonly BookRightDbContext _context;
-
-        public BehandlingstypeRepository(BookRightDbContext context)
+        public BehandlingstypeRepository(BookRightDbContext context) 
         {
             _context = context;
         }
 
-        public async Task<Behandlingstype> HentAsync(Guid behandlingstypeId)
+        // Henter en behandlingstype ud fra id, eller null hvis den ikke findes
+        public async Task<Behandlingstype?> HentEfterIdAsync(Guid behandlingstypeId) 
         {
             return await _context.Behandlingstyper
-                .FirstOrDefaultAsync(bt => bt.BehandlingstypeId == behandlingstypeId);
+                .FirstOrDefaultAsync(b => b.BehandlingstypeId == behandlingstypeId);
         }
 
+        // Henter alle behandlingstyper fra databasen og returnerer dem som en liste
         public async Task<IEnumerable<Behandlingstype>> HentAlleAsync()
         {
             return await _context.Behandlingstyper.ToListAsync();

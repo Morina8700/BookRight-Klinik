@@ -4,7 +4,7 @@ namespace BookRight.Domain.Interfaces
 {
     public interface IBehandlingstypeRepository
     {
-        Task<Behandlingstype> HentAsync(Guid behandlingstypeId);
+        Task<Behandlingstype?> HentEfterIdAsync(Guid behandlingstypeId);
         Task<IEnumerable<Behandlingstype>> HentAlleAsync();
     }
 }

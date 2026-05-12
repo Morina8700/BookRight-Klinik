@@ -32,6 +32,10 @@ namespace BookRight.Infrastructure.Persistence
                 .Property(b => b.PrisUdenRabat)
                 .HasPrecision(18, 2);
 
+            modelBuilder.Entity<Behandler>()
+                .Property(b => b.KrævetAutorisationsType)
+                .HasColumnName("AutorisationsType");
+
             var klinik1Id = Guid.Parse("11111111-1111-1111-1111-111111111111");
             var klinik2Id = Guid.Parse("22222222-2222-2222-2222-222222222222");
             var klinik3Id = Guid.Parse("33333333-3333-3333-3333-333333333333");
@@ -81,24 +85,24 @@ namespace BookRight.Infrastructure.Persistence
 
             // Behandlere
             modelBuilder.Entity<Behandler>().HasData(
-                new { BehandlerId = b1, Fornavn = "Anders", Efternavn = "Nielsen", Email = "anders@bookright.dk", Telefon = "11111101", AutorisationsNummer = "FYS-001", AutorisationsType = AutorisationsType.Fysioterapeut },
-                new { BehandlerId = b2, Fornavn = "Birgitte", Efternavn = "Hansen", Email = "birgitte@bookright.dk", Telefon = "11111102", AutorisationsNummer = "FYS-002", AutorisationsType = AutorisationsType.Fysioterapeut },
-                new { BehandlerId = b3, Fornavn = "Casper", Efternavn = "Madsen", Email = "casper@bookright.dk", Telefon = "11111103", AutorisationsNummer = "FYS-003", AutorisationsType = AutorisationsType.Fysioterapeut },
-                new { BehandlerId = b4, Fornavn = "Diana", Efternavn = "Sørensen", Email = "diana@bookright.dk", Telefon = "11111104", AutorisationsNummer = "FYS-004", AutorisationsType = AutorisationsType.Fysioterapeut },
-                new { BehandlerId = b5, Fornavn = "Erik", Efternavn = "Christensen", Email = "erik@bookright.dk", Telefon = "11111105", AutorisationsNummer = "MAS-001", AutorisationsType = AutorisationsType.Massør },
-                new { BehandlerId = b6, Fornavn = "Freja", Efternavn = "Pedersen", Email = "freja@bookright.dk", Telefon = "11111106", AutorisationsNummer = "MAS-002", AutorisationsType = AutorisationsType.Massør },
-                new { BehandlerId = b7, Fornavn = "Gunnar", Efternavn = "Jensen", Email = "gunnar@bookright.dk", Telefon = "11111107", AutorisationsNummer = "MAS-003", AutorisationsType = AutorisationsType.Massør },
-                new { BehandlerId = b8, Fornavn = "Hanne", Efternavn = "Larsen", Email = "hanne@bookright.dk", Telefon = "11111108", AutorisationsNummer = "AKU-001", AutorisationsType = AutorisationsType.Akupunktør },
-                new { BehandlerId = b9, Fornavn = "Ivan", Efternavn = "Olsen", Email = "ivan@bookright.dk", Telefon = "11111109", AutorisationsNummer = "AKU-002", AutorisationsType = AutorisationsType.Akupunktør },
-                new { BehandlerId = b10, Fornavn = "Julie", Efternavn = "Thomsen", Email = "julie@bookright.dk", Telefon = "11111110", AutorisationsNummer = "AKU-003", AutorisationsType = AutorisationsType.Akupunktør },
-                new { BehandlerId = b11, Fornavn = "Klaus", Efternavn = "Andersen", Email = "klaus@bookright.dk", Telefon = "11111111", AutorisationsNummer = "KOS-001", AutorisationsType = AutorisationsType.Kostvejleder },
-                new { BehandlerId = b12, Fornavn = "Laura", Efternavn = "Møller", Email = "laura@bookright.dk", Telefon = "11111112", AutorisationsNummer = "KOS-002", AutorisationsType = AutorisationsType.Kostvejleder }
+                new { BehandlerId = b1, Fornavn = "Anders", Efternavn = "Nielsen", Email = "anders@bookright.dk", Telefon = "11111101", AutorisationsNummer = "FYS-001", KrævetAutorisationsType = AutorisationsType.Fysioterapeut },
+                new { BehandlerId = b2, Fornavn = "Birgitte", Efternavn = "Hansen", Email = "birgitte@bookright.dk", Telefon = "11111102", AutorisationsNummer = "FYS-002", KrævetAutorisationsType = AutorisationsType.Fysioterapeut },
+                new { BehandlerId = b3, Fornavn = "Casper", Efternavn = "Madsen", Email = "casper@bookright.dk", Telefon = "11111103", AutorisationsNummer = "FYS-003", KrævetAutorisationsType = AutorisationsType.Fysioterapeut },
+                new { BehandlerId = b4, Fornavn = "Diana", Efternavn = "Sørensen", Email = "diana@bookright.dk", Telefon = "11111104", AutorisationsNummer = "FYS-004", KrævetAutorisationsType = AutorisationsType.Fysioterapeut },
+                new { BehandlerId = b5, Fornavn = "Erik", Efternavn = "Christensen", Email = "erik@bookright.dk", Telefon = "11111105", AutorisationsNummer = "MAS-001", KrævetAutorisationsType = AutorisationsType.Massør },
+                new { BehandlerId = b6, Fornavn = "Freja", Efternavn = "Pedersen", Email = "freja@bookright.dk", Telefon = "11111106", AutorisationsNummer = "MAS-002", KrævetAutorisationsType = AutorisationsType.Massør },
+                new { BehandlerId = b7, Fornavn = "Gunnar", Efternavn = "Jensen", Email = "gunnar@bookright.dk", Telefon = "11111107", AutorisationsNummer = "MAS-003", KrævetAutorisationsType = AutorisationsType.Massør },
+                new { BehandlerId = b8, Fornavn = "Hanne", Efternavn = "Larsen", Email = "hanne@bookright.dk", Telefon = "11111108", AutorisationsNummer = "AKU-001", KrævetAutorisationsType = AutorisationsType.Akupunktør },
+                new { BehandlerId = b9, Fornavn = "Ivan", Efternavn = "Olsen", Email = "ivan@bookright.dk", Telefon = "11111109", AutorisationsNummer = "AKU-002", KrævetAutorisationsType = AutorisationsType.Akupunktør },
+                new { BehandlerId = b10, Fornavn = "Julie", Efternavn = "Thomsen", Email = "julie@bookright.dk", Telefon = "11111110", AutorisationsNummer = "AKU-003", KrævetAutorisationsType = AutorisationsType.Akupunktør },
+                new { BehandlerId = b11, Fornavn = "Klaus", Efternavn = "Andersen", Email = "klaus@bookright.dk", Telefon = "11111111", AutorisationsNummer = "KOS-001", KrævetAutorisationsType = AutorisationsType.Kostvejleder },
+                new { BehandlerId = b12, Fornavn = "Laura", Efternavn = "Møller", Email = "laura@bookright.dk", Telefon = "11111112", AutorisationsNummer = "KOS-002", KrævetAutorisationsType = AutorisationsType.Kostvejleder }
             );
 
             // Behandler <-> Klinik
             modelBuilder.Entity<Behandler>()
                 .HasMany(b => b.Klinikker)
-                .WithMany()
+                .WithMany(k => k.Behandlere)
                 .UsingEntity<Dictionary<string, object>>(
                     "BehandlerKlinikker",
                     j => j.HasOne<Klinik>().WithMany().HasForeignKey("KlinikkerKlinikId"),
