@@ -4,6 +4,7 @@ using BookRight.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookRight.Infrastructure.Migrations
 {
     [DbContext(typeof(BookRightDbContext))]
-    partial class BookRightDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260513074226_AddFoedselsdagsrabatBrugtToKunde")]
+    partial class AddFoedselsdagsrabatBrugtToKunde
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -479,9 +482,6 @@ namespace BookRight.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
                     b.Property<int>("VarighedMinutter")
                         .HasColumnType("int");
 
@@ -496,7 +496,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 0,
                             Navn = "Fysioterapi 30 min",
                             Pris = 395m,
-                            Type = 0,
                             VarighedMinutter = 30
                         },
                         new
@@ -505,7 +504,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 0,
                             Navn = "Fysioterapi 45 min",
                             Pris = 589m,
-                            Type = 0,
                             VarighedMinutter = 45
                         },
                         new
@@ -514,7 +512,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 0,
                             Navn = "Fysioterapi 60 min",
                             Pris = 745m,
-                            Type = 0,
                             VarighedMinutter = 60
                         },
                         new
@@ -523,7 +520,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 1,
                             Navn = "Sportsmassage 30 min",
                             Pris = 350m,
-                            Type = 1,
                             VarighedMinutter = 30
                         },
                         new
@@ -532,7 +528,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 1,
                             Navn = "Sportsmassage 60 min",
                             Pris = 699m,
-                            Type = 1,
                             VarighedMinutter = 60
                         },
                         new
@@ -541,7 +536,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 2,
                             Navn = "Akupunktur 45 min",
                             Pris = 550m,
-                            Type = 2,
                             VarighedMinutter = 45
                         },
                         new
@@ -550,7 +544,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 3,
                             Navn = "Kostvejledning førstegangskons.",
                             Pris = 799m,
-                            Type = 3,
                             VarighedMinutter = 60
                         },
                         new
@@ -559,7 +552,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 3,
                             Navn = "Kostvejledning opfølgning",
                             Pris = 450m,
-                            Type = 3,
                             VarighedMinutter = 30
                         },
                         new
@@ -568,7 +560,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 0,
                             Navn = "Holdtræning/genoptræning",
                             Pris = 150m,
-                            Type = 4,
                             VarighedMinutter = 60
                         });
                 });
