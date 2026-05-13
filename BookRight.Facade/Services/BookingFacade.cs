@@ -1,6 +1,6 @@
-﻿using BookRight.Domain.Interfaces;
-using BookRight.Facade.Contracts.Bookinger;
+﻿using BookRight.Facade.Contracts.Bookinger;
 using BookRight.Facade.Interfaces;
+using BookRight.Domain.Interfaces;
 using BookRight.UseCases.Commands;
 
 namespace BookRight.Facade.Services
@@ -12,22 +12,12 @@ namespace BookRight.Facade.Services
         private readonly IBehandlerRepository _behandlerRepository;
         private readonly IBehandlingstypeRepository _behandlingstypeRepository;
 
-        public BookingFacade(
-            OpretBookingHandler opretBookingHandler,
-            HentKundehistorikHandler hentKundehistorikHandler,
-            IKundeRepository kundeRepository,
-            IBehandlerRepository behandlerRepository,
-            IKlinikRepository klinikRepository,
-            IBehandlingstypeRepository behandlingstypeRepository)
+        public BookingFacade(OpretBookingHandler opretBookingHandler, IKlinikRepository klinikRepository, IBehandlerRepository behandlerRepository, IBehandlingstypeRepository behandlingstypeRepository) 
         {
             _opretBookingHandler = opretBookingHandler;
             _klinikRepository = klinikRepository;
             _behandlerRepository = behandlerRepository;
             _behandlingstypeRepository = behandlingstypeRepository;
-            _aflysBookingHandler = aflysBookingHandler;
-            _afslutBookingHandler = afslutBookingHandler;
-            _noShowBookingHandler = noShowBookingHandler;
-            _ankommetBookingHandler = ankommetBookingHandler;
         }
 
         public async Task<BookingResponse> OpretBookingAsync(OpretBookingRequest request)
@@ -77,46 +67,27 @@ namespace BookRight.Facade.Services
             return behandlere.Select(b => new BehandlerDto
             {
                 BehandlerId = b.BehandlerId,
-                FuldeNavn = $"{b.Fornavn} {b.Efternavn}",
-                AutorisationsType = b.AutorisationsType.ToString(),
-                Klinikker = b.Klinikker.Select(k => new KlinikDto
-                {
-                    KlinikId = k.KlinikId,
-                    Navn = k.Navn,
-                    Adresse = k.Adresse
-                }),
-                Behandlingstyper = b.Behandlingstyper.Select(bt => new BehandlingstypeDto
-                {
-                    BehandlingstypeId = bt.BehandlingstypeId,
-                    Navn = bt.Navn,
-                    Pris = bt.Pris,
-                    VarighedMinutter = bt.VarighedMinutter
-                })
+                Fornavn = b.Fornavn ?? string.Empty,
+                Efternavn = b.Efternavn ?? string.Empty,
+                // Gemmer id på de klinikker, hvor behandleren arbejder
+                KlinikIds = b.Klinikker.Select(k => k.KlinikId).ToList(),
+                // Gemmer id på de behandlingstyper, som behandleren må udføre
+                BehandlingstypeIds = b.Behandlingstyper.Select(bt => bt.BehandlingstypeId).ToList()
             });
         }
 
-        public async Task<IEnumerable<KlinikDto>> HentAlleKlinikkerAsync()
+        public async Task<IEnumerable<BehandlingstypeDto>> HentAlleBehandlingstyperAsync()
         {
-            var klinikker = await _klinikRepository.HentAlleAsync();
-            return klinikker.Select(k => new KlinikDto
+            // Henter behandlingstyper fra databasen og laver dem om til DTOs til dropdown
+            var behandlingstyper = await _behandlingstypeRepository.HentAlleAsync();
+
+            return behandlingstyper.Select(b => new BehandlingstypeDto
             {
-                KlinikId = k.KlinikId,
-                Navn = k.Navn,
-                Adresse = k.Adresse
+                BehandlingstypeId = b.BehandlingstypeId,
+                Navn = b.Navn ?? string.Empty,
+                Pris = b.Pris,
+                VarighedMinutter = b.VarighedMinutter
             });
         }
-
-        public Task<bool> MarkerNoShowAsync(Guid bookingId)
-        {
-            var typer = await _behandlingstypeRepository.HentAlleAsync();
-            return typer.Select(bt => new BehandlingstypeDto
-            {
-                BehandlingstypeId = bt.BehandlingstypeId,
-                Navn = bt.Navn,
-                Pris = bt.Pris,
-                VarighedMinutter = bt.VarighedMinutter
-            });
-        }
-
     }
 }

@@ -81,28 +81,10 @@ namespace BookRight.UseCases.Commands
                 aktiveKampagner);
             var rabatResultat = await _rabatBeregner.BeregnBedsteRabatAsync(rabatBeregningContext);
 
-            if (aktiveBookinger >= klinik.AntalRum)
-                return new OpretBookingResult { Success = false };
+            if (rabatResultat.RabatType == RabatType.Fødselsdag)
+                kunde.MarkerFoedselsdagsrabatBrugt();
 
-            // I/O-bound arbejde: kampagner hentes fra databasen før rabatberegningen starter.
-            var bookingDato = DateOnly.FromDateTime(command.StartTid);
-            var aktiveKampagner = await _kampagneRepository.HentAktiveKampagnerAsync(bookingDato);
-
-            // Context samler alle oplysninger, som strategierne skal bruge.
-            // Derfor skal rabatstrategierne ikke selv hente data fra databasen.
-            var rabatContext = new RabatBeregningContext(
-                PrisUdenRabat: new Penge(behandlingstype.Pris),
-                BookingDato: DateOnly.FromDateTime(command.StartTid),
-                KundeFoedselsdato: kunde.Fødselsdato,
-                LoyalitetsNiveau: kunde.loyalitetsNiveau,
-                FoedselsdagsrabatBrugt: false, // Der skal laves kunde historik for at kunne tjekke dette, så det sættes til false for nu
-                Behandlingstyper: [MapTilBehandlingsType(behandlingstype)],
-                AktivKampagner: aktiveKampagner
-                );
-
-            // CPU-bound arbejde: loyalitet, fødselsdag og kampagne beregnes parallelt i rabatservicen.
-            var rabatResultat = await _rabatBeregner.BeregnBedsteRabatAsync(rabatContext);
-
+            // 7. Opret booking 
             var booking = new Booking(
                 command.KundeId,
                 command.BehandlerId,

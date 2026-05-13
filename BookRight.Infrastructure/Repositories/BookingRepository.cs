@@ -1,6 +1,7 @@
 ﻿using BookRight.Domain.Aggregates;
 using BookRight.Domain.Enums;
 using BookRight.Domain.Interfaces;
+using BookRight.Domain.Models;
 using BookRight.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,27 +39,8 @@ namespace BookRight.Infrastructure.Repositories
 
         public async Task AddAsync(Booking booking)
         {
-            return await (
-                from booking in _context.Bookinger
-                join klinik in _context.Klinikker on booking.KlinikId equals klinik.KlinikId
-                join behandler in _context.Behandlere on booking.BehandlerId equals behandler.BehandlerId
-                join behandlingstype in _context.Behandlingstyper on booking.BehandlingstypeId equals behandlingstype.BehandlingstypeId
-                where booking.KundeId == kundeId &&
-                      (booking.Status == BookingStatus.Afsluttet ||
-                       booking.Status == BookingStatus.Aflyst ||
-                       booking.Status == BookingStatus.NoShow)
-                orderby booking.StartTid descending
-                select new KundehistorikPost
-                {
-                    BookingId = booking.BookingId,
-                    StartTid = booking.StartTid,
-                    SlutTid = booking.SlutTid,
-                    KlinikNavn = klinik.Navn,
-                    BehandlerNavn = behandler.Fornavn + " " + behandler.Efternavn,
-                    BehandlingstypeNavn = behandlingstype.Navn,
-                    Status = booking.Status
-                }
-            ).ToListAsync();
+            await _context.Bookinger.AddAsync(booking);
+            await _context.SaveChangesAsync();
         }
     }
 }

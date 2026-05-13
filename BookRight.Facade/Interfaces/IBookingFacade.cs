@@ -9,10 +9,5 @@ namespace BookRight.Facade.Interfaces
         Task<IEnumerable<KlinikDto>> HentAlleKlinikkerAsync();
         Task<IEnumerable<BehandlerDto>> HentAlleBehandlereAsync();
         Task<IEnumerable<BehandlingstypeDto>> HentAlleBehandlingstyperAsync();
-
-        Task<bool> AflysBookingAsync(Guid bookingId);
-        Task<bool> AfslutBookingAsync(Guid bookingId);
-        Task<bool> MarkerAnkommetAsync(Guid bookingId);
-        Task<bool> MarkerNoShowAsync(Guid bookingId);
     }
 }

@@ -27,7 +27,8 @@ namespace BookRight.Domain.Aggregates
             Navn = navn;
             VarighedMinutter = varighedMinutter;
             Pris = pris;
-            KrævetAutorisationsType = krævetType;
+            KrævetAutorisationsType = krævetAutorisationsType;
+            Type = type;
         }
     }
 }

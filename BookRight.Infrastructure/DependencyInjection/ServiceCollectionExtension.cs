@@ -5,7 +5,6 @@ using BookRight.Facade.Services;
 using BookRight.Infrastructure.Persistence;
 using BookRight.Infrastructure.Repositories;
 using BookRight.UseCases.Commands;
-using BookRight.UseCases.Commands.BookingStatus.Handlers;
 using BookRight.UseCases.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,17 +26,12 @@ namespace BookRight.Infrastructure.DependencyInjection
             services.AddScoped<IKlinikRepository, KlinikRepository>();
             services.AddScoped<IBehandlingstypeRepository, BehandlingstypeRepository>();
             services.AddScoped<IKampagneRepository, KampagneRepository>();
-            services.AddScoped<IBookingStatusRepository, BookingRepository>();
 
 
             // Handlers
             services.AddScoped<OpretKundeHandler>();
             services.AddScoped<OpretBookingHandler>();
             services.AddScoped<HentKundehistorikHandler>();
-            services.AddScoped<AflysBookingHandler>();
-            services.AddScoped<AfslutBookingHandler>();
-            services.AddScoped<AnkommetBookingHandler>();
-            services.AddScoped<NoShowBookingHandler>();
 
             // Facades
             services.AddScoped<IKundeFacade, KundeFacade>();

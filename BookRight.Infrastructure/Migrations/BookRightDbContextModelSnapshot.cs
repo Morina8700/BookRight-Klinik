@@ -479,9 +479,6 @@ namespace BookRight.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
                     b.Property<int>("VarighedMinutter")
                         .HasColumnType("int");
 
@@ -496,7 +493,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 0,
                             Navn = "Fysioterapi 30 min",
                             Pris = 395m,
-                            Type = 0,
                             VarighedMinutter = 30
                         },
                         new
@@ -505,7 +501,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 0,
                             Navn = "Fysioterapi 45 min",
                             Pris = 589m,
-                            Type = 0,
                             VarighedMinutter = 45
                         },
                         new
@@ -514,7 +509,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 0,
                             Navn = "Fysioterapi 60 min",
                             Pris = 745m,
-                            Type = 0,
                             VarighedMinutter = 60
                         },
                         new
@@ -523,7 +517,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 1,
                             Navn = "Sportsmassage 30 min",
                             Pris = 350m,
-                            Type = 1,
                             VarighedMinutter = 30
                         },
                         new
@@ -532,7 +525,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 1,
                             Navn = "Sportsmassage 60 min",
                             Pris = 699m,
-                            Type = 1,
                             VarighedMinutter = 60
                         },
                         new
@@ -541,7 +533,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 2,
                             Navn = "Akupunktur 45 min",
                             Pris = 550m,
-                            Type = 2,
                             VarighedMinutter = 45
                         },
                         new
@@ -550,7 +541,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 3,
                             Navn = "Kostvejledning førstegangskons.",
                             Pris = 799m,
-                            Type = 3,
                             VarighedMinutter = 60
                         },
                         new
@@ -559,7 +549,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 3,
                             Navn = "Kostvejledning opfølgning",
                             Pris = 450m,
-                            Type = 3,
                             VarighedMinutter = 30
                         },
                         new
@@ -568,7 +557,6 @@ namespace BookRight.Infrastructure.Migrations
                             KrævetAutorisationsType = 0,
                             Navn = "Holdtræning/genoptræning",
                             Pris = 150m,
-                            Type = 4,
                             VarighedMinutter = 60
                         });
                 });
@@ -710,9 +698,6 @@ namespace BookRight.Infrastructure.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("FoedselsdagsrabatBrugt")
-                        .HasColumnType("bit");
 
                     b.Property<Guid?>("ForetrukkenBehandlerID")
                         .HasColumnType("uniqueidentifier");
