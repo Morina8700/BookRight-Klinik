@@ -25,6 +25,8 @@ namespace BookRight.Domain.Aggregates
 
         public LoyalitetsNiveau loyalitetsNiveau { get; private set; }
 
+        public bool FoedselsdagsrabatBrugt { get; private set; }
+
 
         private Kunde() { } // For EF Core
 
@@ -57,6 +59,12 @@ namespace BookRight.Domain.Aggregates
             Helbredsnotater = helbredsnotater;
             ForetrukkenBehandlerID = foretrukkenBehandlerID;
             loyalitetsNiveau = LoyalitetsNiveau.Ingen;
+            FoedselsdagsrabatBrugt = false;
+        }
+
+        public void MarkerFoedselsdagsrabatBrugt()
+        {
+            FoedselsdagsrabatBrugt = true;
         }
 
     }

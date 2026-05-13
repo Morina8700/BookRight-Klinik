@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BookRight.Infrastructure.Repositories
 {
         // INFRASTRUCTURE  (Implementerer IBookingRepository med EF Core)
-    public class BookingRepository : IBookingRepository, IBookingStatusRepository
+    public class BookingRepository : IBookingRepository
     {
         private readonly BookRightDbContext _context;
         public BookingRepository(BookRightDbContext context)
@@ -38,22 +38,27 @@ namespace BookRight.Infrastructure.Repositories
 
         public async Task AddAsync(Booking booking)
         {
-            await _context.Bookinger.AddAsync(booking);
-            await _context.SaveChangesAsync();
-        }
-
-       public async Task<Booking?> HentPåIdAsync(Guid bookingId)
-        {
-            return await _context.Bookinger
-                .FirstOrDefaultAsync(b => b.BookingId == bookingId);
-        }
-
-
-        public async Task OpdaterAsync(Booking booking)
-        {
-            _context.Bookinger.Update(booking);
-
-            await _context.SaveChangesAsync();
+            return await (
+                from booking in _context.Bookinger
+                join klinik in _context.Klinikker on booking.KlinikId equals klinik.KlinikId
+                join behandler in _context.Behandlere on booking.BehandlerId equals behandler.BehandlerId
+                join behandlingstype in _context.Behandlingstyper on booking.BehandlingstypeId equals behandlingstype.BehandlingstypeId
+                where booking.KundeId == kundeId &&
+                      (booking.Status == BookingStatus.Afsluttet ||
+                       booking.Status == BookingStatus.Aflyst ||
+                       booking.Status == BookingStatus.NoShow)
+                orderby booking.StartTid descending
+                select new KundehistorikPost
+                {
+                    BookingId = booking.BookingId,
+                    StartTid = booking.StartTid,
+                    SlutTid = booking.SlutTid,
+                    KlinikNavn = klinik.Navn,
+                    BehandlerNavn = behandler.Fornavn + " " + behandler.Efternavn,
+                    BehandlingstypeNavn = behandlingstype.Navn,
+                    Status = booking.Status
+                }
+            ).ToListAsync();
         }
     }
 }
