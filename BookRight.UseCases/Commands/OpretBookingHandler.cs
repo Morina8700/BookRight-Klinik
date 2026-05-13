@@ -76,10 +76,13 @@ namespace BookRight.UseCases.Commands
                 DateOnly.FromDateTime(command.StartTid),
                 kunde.Fødselsdato,
                 kunde.loyalitetsNiveau,
-                false,
-                new List<BehandlingsType> {BehandlingsType.Fysioterapi},
+                kunde.FoedselsdagsrabatBrugt,
+                new List<BehandlingsType> { behandlingstype.Type },
                 aktiveKampagner);
             var rabatResultat = await _rabatBeregner.BeregnBedsteRabatAsync(rabatBeregningContext);
+
+            if (rabatResultat.RabatType == RabatType.Fødselsdag)
+                kunde.MarkerFoedselsdagsrabatBrugt();
 
             // 7. Opret booking 
             var booking = new Booking(

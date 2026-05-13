@@ -97,10 +97,6 @@
                                 <label for="starttid">Starttidspunkt</label>
                                 <input id="starttid" type="time" @bind="valgtStartTid" />
                             </div>
-                            <div class="formular-felt">
-                                <label for="sluttid">Sluttidspunkt</label>
-                                <input id="sluttid" type="time" @bind="valgtSlutTid" />
-                            </div>
                         </div>
                     </div>
 
@@ -110,6 +106,7 @@
                         <div class="pris-boks">
                             <p class="pris-label">Pris uden rabat</p>
                             <p class="pris-beloeb">@valgteBehandlingstype.Pris kr.</p>
+                            <p class="pris-note">Varighed: @valgteBehandlingstype.VarighedMinutter minutter</p>
                             <p class="pris-note">Rabat beregnes automatisk ved oprettelse</p>
                         </div>
                     }
@@ -158,7 +155,6 @@
 
     private DateOnly valgtDato = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly valgtStartTid = TimeOnly.MinValue;
-    private TimeOnly valgtSlutTid = TimeOnly.MinValue;
 
     private bool isLoading = true;
     private string besked = "";
@@ -231,7 +227,8 @@
 
     private DateTime BeregnSlutTid()
     {
-        return valgtDato.ToDateTime(valgtSlutTid);
+        var start = valgtDato.ToDateTime(valgtStartTid);
+        return start.AddMinutes(valgteBehandlingstype?.VarighedMinutter ?? 0);
     }
 
     private bool KanOprette()
@@ -240,8 +237,7 @@
                valgteKlinikId != Guid.Empty &&
                valgteBehandlerId != Guid.Empty &&
                valgteBehandlingstypeId != Guid.Empty &&
-               valgtStartTid != TimeOnly.MinValue &&
-               valgtSlutTid != TimeOnly.MinValue;
+               valgtStartTid != TimeOnly.MinValue;
     }
 
     private async Task OpretBookingAsync()

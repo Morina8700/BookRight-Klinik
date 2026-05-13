@@ -5,5 +5,6 @@
         public Guid BehandlingstypeId { get; set; }
         public string Navn { get; set; }
         public decimal Pris { get; set; }
+        public int VarighedMinutter { get; set; }
     }
 }

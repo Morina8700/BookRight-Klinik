@@ -85,7 +85,8 @@ namespace BookRight.Facade.Services
             {
                 BehandlingstypeId = b.BehandlingstypeId,
                 Navn = b.Navn ?? string.Empty,
-                Pris = b.Pris
+                Pris = b.Pris,
+                VarighedMinutter = b.VarighedMinutter
             });
         }
     }

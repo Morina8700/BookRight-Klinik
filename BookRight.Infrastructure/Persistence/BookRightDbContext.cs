@@ -72,15 +72,15 @@ namespace BookRight.Infrastructure.Persistence
 
             // Behandlingstyper
             modelBuilder.Entity<Behandlingstype>().HasData(
-                new { BehandlingstypeId = fysio30Id, Navn = "Fysioterapi 30 min", VarighedMinutter = 30, Pris = 395m, KrævetAutorisationsType = AutorisationsType.Fysioterapeut },
-                new { BehandlingstypeId = fysio45Id, Navn = "Fysioterapi 45 min", VarighedMinutter = 45, Pris = 589m, KrævetAutorisationsType = AutorisationsType.Fysioterapeut },
-                new { BehandlingstypeId = fysio60Id, Navn = "Fysioterapi 60 min", VarighedMinutter = 60, Pris = 745m, KrævetAutorisationsType = AutorisationsType.Fysioterapeut },
-                new { BehandlingstypeId = massage30Id, Navn = "Sportsmassage 30 min", VarighedMinutter = 30, Pris = 350m, KrævetAutorisationsType = AutorisationsType.Massør },
-                new { BehandlingstypeId = massage60Id, Navn = "Sportsmassage 60 min", VarighedMinutter = 60, Pris = 699m, KrævetAutorisationsType = AutorisationsType.Massør },
-                new { BehandlingstypeId = akupunkturId, Navn = "Akupunktur 45 min", VarighedMinutter = 45, Pris = 550m, KrævetAutorisationsType = AutorisationsType.Akupunktør },
-                new { BehandlingstypeId = kostFørsteId, Navn = "Kostvejledning førstegangskons.", VarighedMinutter = 60, Pris = 799m, KrævetAutorisationsType = AutorisationsType.Kostvejleder },
-                new { BehandlingstypeId = kostOpfølgId, Navn = "Kostvejledning opfølgning", VarighedMinutter = 30, Pris = 450m, KrævetAutorisationsType = AutorisationsType.Kostvejleder },
-                new { BehandlingstypeId = holdId, Navn = "Holdtræning/genoptræning", VarighedMinutter = 60, Pris = 150m, KrævetAutorisationsType = AutorisationsType.Fysioterapeut }
+                new { BehandlingstypeId = fysio30Id, Navn = "Fysioterapi 30 min", VarighedMinutter = 30, Pris = 395m, KrævetAutorisationsType = AutorisationsType.Fysioterapeut, Type = BehandlingsType.Fysioterapi },
+                new { BehandlingstypeId = fysio45Id, Navn = "Fysioterapi 45 min", VarighedMinutter = 45, Pris = 589m, KrævetAutorisationsType = AutorisationsType.Fysioterapeut, Type = BehandlingsType.Fysioterapi },
+                new { BehandlingstypeId = fysio60Id, Navn = "Fysioterapi 60 min", VarighedMinutter = 60, Pris = 745m, KrævetAutorisationsType = AutorisationsType.Fysioterapeut, Type = BehandlingsType.Fysioterapi },
+                new { BehandlingstypeId = massage30Id, Navn = "Sportsmassage 30 min", VarighedMinutter = 30, Pris = 350m, KrævetAutorisationsType = AutorisationsType.Massør, Type = BehandlingsType.Sportsmassage },
+                new { BehandlingstypeId = massage60Id, Navn = "Sportsmassage 60 min", VarighedMinutter = 60, Pris = 699m, KrævetAutorisationsType = AutorisationsType.Massør, Type = BehandlingsType.Sportsmassage },
+                new { BehandlingstypeId = akupunkturId, Navn = "Akupunktur 45 min", VarighedMinutter = 45, Pris = 550m, KrævetAutorisationsType = AutorisationsType.Akupunktør, Type = BehandlingsType.Akupunktur },
+                new { BehandlingstypeId = kostFørsteId, Navn = "Kostvejledning førstegangskons.", VarighedMinutter = 60, Pris = 799m, KrævetAutorisationsType = AutorisationsType.Kostvejleder, Type = BehandlingsType.Kostvejledning },
+                new { BehandlingstypeId = kostOpfølgId, Navn = "Kostvejledning opfølgning", VarighedMinutter = 30, Pris = 450m, KrævetAutorisationsType = AutorisationsType.Kostvejleder, Type = BehandlingsType.Kostvejledning },
+                new { BehandlingstypeId = holdId, Navn = "Holdtræning/genoptræning", VarighedMinutter = 60, Pris = 150m, KrævetAutorisationsType = AutorisationsType.Fysioterapeut, Type = BehandlingsType.Holdtræning }
             );
 
             // Behandlere
