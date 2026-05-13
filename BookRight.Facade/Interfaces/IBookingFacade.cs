@@ -9,5 +9,6 @@ namespace BookRight.Facade.Interfaces
         Task<IEnumerable<KlinikDto>> HentAlleKlinikkerAsync();
         Task<IEnumerable<BehandlerDto>> HentAlleBehandlereAsync();
         Task<IEnumerable<BehandlingstypeDto>> HentAlleBehandlingstyperAsync();
+        Task<IEnumerable<KundehistorikDto>> HentKundehistorikAsync(Guid kundeId);
     }
 }
