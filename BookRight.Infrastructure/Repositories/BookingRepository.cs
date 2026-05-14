@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BookRight.Infrastructure.Repositories
 {
         // INFRASTRUCTURE  (Implementerer IBookingRepository med EF Core)
-    public class BookingRepository : IBookingRepository
+    public class BookingRepository : IBookingRepository, IBookingStatusRepository
     {
         private readonly BookRightDbContext _context;
         public BookingRepository(BookRightDbContext context)
@@ -40,6 +40,18 @@ namespace BookRight.Infrastructure.Repositories
         public async Task AddAsync(Booking booking)
         {
             await _context.Bookinger.AddAsync(booking);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Booking?> HentPåIdAsync(Guid bookingId)
+        {
+            return await _context.Bookinger
+                .FirstOrDefaultAsync(b => b.BookingId == bookingId);
+        }
+
+        public async Task OpdaterAsync(Booking booking)
+        {
+            _context.Bookinger.Update(booking);
             await _context.SaveChangesAsync();
         }
     }

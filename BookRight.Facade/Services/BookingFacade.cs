@@ -2,6 +2,8 @@
 using BookRight.Facade.Interfaces;
 using BookRight.Domain.Interfaces;
 using BookRight.UseCases.Commands;
+using BookRight.UseCases.Commands.BookingStatus.Handlers;
+using BookRight.UseCases.Commands.BookingStatus.Commands;
 
 namespace BookRight.Facade.Services
 {
@@ -11,13 +13,28 @@ namespace BookRight.Facade.Services
         private readonly IKlinikRepository _klinikRepository;
         private readonly IBehandlerRepository _behandlerRepository;
         private readonly IBehandlingstypeRepository _behandlingstypeRepository;
+        private readonly AflysBookingHandler _aflysBookingHandler;
+        private readonly AnkommetBookingHandler _ankommetBookingHandler;
+        private readonly AfslutBookingHandler _afslutBookingHandler;
+        private readonly NoShowBookingHandler _noShowBookingHandler;
 
-        public BookingFacade(OpretBookingHandler opretBookingHandler, IKlinikRepository klinikRepository, IBehandlerRepository behandlerRepository, IBehandlingstypeRepository behandlingstypeRepository) 
+        public BookingFacade(OpretBookingHandler opretBookingHandler, 
+            IKlinikRepository klinikRepository, 
+            IBehandlerRepository behandlerRepository, 
+            IBehandlingstypeRepository behandlingstypeRepository,
+            AflysBookingHandler aflysBookingHandler,
+            AnkommetBookingHandler ankommetBookingHandler,
+            AfslutBookingHandler afslutBookingHandler,
+            NoShowBookingHandler noShowBookingHandler) 
         {
             _opretBookingHandler = opretBookingHandler;
             _klinikRepository = klinikRepository;
             _behandlerRepository = behandlerRepository;
             _behandlingstypeRepository = behandlingstypeRepository;
+            _aflysBookingHandler = aflysBookingHandler;
+            _afslutBookingHandler = afslutBookingHandler;
+            _ankommetBookingHandler = ankommetBookingHandler;
+            _noShowBookingHandler = noShowBookingHandler;
         }
 
         public async Task<BookingResponse> OpretBookingAsync(OpretBookingRequest request)
@@ -88,6 +105,27 @@ namespace BookRight.Facade.Services
                 Pris = b.Pris,
                 VarighedMinutter = b.VarighedMinutter
             });
+        }
+
+
+        public Task<bool> AflysBookingAsync(Guid bookingId)
+        {
+            return _aflysBookingHandler.HandleAsync(new AflysBookingCommand(bookingId));
+        }
+
+        public Task<bool> AfslutBookingAsync(Guid bookingId)
+        {
+            return _afslutBookingHandler.HandleAsync(new AfslutBookingCommand(bookingId));
+        }
+
+        public Task<bool> MarkerAnkommetAsync(Guid bookingId)
+        {
+            return _ankommetBookingHandler.HandleAsync(new MarkerAnkommetCommand(bookingId));
+        }
+
+        public Task<bool> MarkerNoShowAsync(Guid bookingId)
+        {
+            return _noShowBookingHandler.HandleAsync(new MarkerNoShowCommand(bookingId));
         }
     }
 }
