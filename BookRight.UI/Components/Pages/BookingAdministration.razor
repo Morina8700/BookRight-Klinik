@@ -1,0 +1,357 @@
+﻿@page "/booking-administration"
+@rendermode InteractiveServer
+@using BookRight.Facade.Interfaces
+@using BookRight.UseCases.DTOs
+@inject IBookingFacade BookingFacade
+
+<main class="booking-admin">
+    <header class="booking-admin__header">
+        <h1>Bookingadministration</h1>
+        <p>Se og administrer bookinger for en valgt dato.</p>
+    </header>
+
+    <section class="booking-admin__toolbar" aria-labelledby="booking-filter-heading">
+        <h2 id="booking-filter-heading">Filter</h2>
+
+        <form class="booking-admin__filter">
+            <label for="booking-date">Dato</label>
+            <input id="booking-date"
+                   name="booking-date"
+                   type="date"
+                   class="booking-admin__date"
+                   value="@valgtDato.ToString("yyyy-MM-dd")"
+                   @onchange="OnDatoChanged" />
+        </form>
+    </section>
+
+    <section aria-labelledby="booking-table-heading">
+        <h2 id="booking-table-heading">Bookinger</h2>
+
+        @if (bookinger.Count == 0)
+        {
+            <p class="booking-admin__empty">Ingen bookinger på den valgte dato.</p>
+        }
+        else
+        {
+            <table class="booking-table">
+                <caption>
+                    Bookinger for @valgtDato.ToString("dd/MM/yyyy")
+                </caption>
+
+                <thead>
+                    <tr>
+                        <th scope="col">Kunde</th>
+                        <th scope="col">Behandler</th>
+                        <th scope="col">Behandling</th>
+                        <th scope="col">Start</th>
+                        <th scope="col">Slut</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Pris</th>
+                        <th scope="col">Rabat</th>
+                        <th scope="col">Handlinger</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var booking in bookinger)
+                    {
+                        <tr>
+                            <td>@booking.KundeNavn</td>
+                            <td>@booking.BehandlerNavn</td>
+                            <td>@booking.BehandlingstypeNavn</td>
+                            <td>
+                                <time datetime="@booking.StartTid.ToString("yyyy-MM-ddTHH:mm")">
+                                    @booking.StartTid.ToString("HH:mm")
+                                </time>
+                            </td>
+                            <td>
+                                <time datetime="@booking.SlutTid.ToString("yyyy-MM-ddTHH:mm")">
+                                    @booking.SlutTid.ToString("HH:mm")
+                                </time>
+                            </td>
+                            <td>
+                                <span class="booking-status @GetStatusClass(booking.Status)">
+                                    @booking.Status
+                                </span>
+                            </td>
+                            <td>@booking.PrisMedRabat.ToString("N2") kr.</td>
+                            <td>@booking.AnvendtRabatType</td>
+                            <td>
+                                <div class="booking-actions" aria-label="Bookinghandlinger">
+                                    <button class="booking-actions__button booking-actions__button--danger"
+                                            type="button"
+                                            @onclick="() => Aflys(booking.BookingId)">
+                                        Aflys
+                                    </button>
+
+                                    <button class="booking-actions__button"
+                                            type="button"
+                                            @onclick="() => MarkerAnkommet(booking.BookingId)">
+                                        Ankommet
+                                    </button>
+
+                                    <button class="booking-actions__button"
+                                            type="button"
+                                            @onclick="() => MarkerNoShow(booking.BookingId)">
+                                        No-show
+                                    </button>
+
+                                    <button class="booking-actions__button"
+                                            type="button"
+                                            @onclick="() => Afslut(booking.BookingId)">
+                                        Afslut
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+</main>
+
+@code {
+    private DateOnly valgtDato = DateOnly.FromDateTime(DateTime.Today);
+    private List<BookingKalenderDto> bookinger = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await HentBookinger();
+    }
+
+    private async Task OnDatoChanged(ChangeEventArgs e)
+    {
+        if (DateOnly.TryParse(e.Value?.ToString(), out var nyDato))
+        {
+            valgtDato = nyDato;
+            await HentBookinger();
+        }
+    }
+
+    private async Task HentBookinger()
+    {
+        bookinger = await BookingFacade.HentBookingerForDatoAsync(valgtDato);
+    }
+
+    private async Task Aflys(Guid bookingId)
+    {
+        await BookingFacade.AflysBookingAsync(bookingId);
+        await HentBookinger();
+    }
+
+    private async Task MarkerAnkommet(Guid bookingId)
+    {
+        await BookingFacade.MarkerAnkommetAsync(bookingId);
+        await HentBookinger();
+    }
+
+    private async Task MarkerNoShow(Guid bookingId)
+    {
+        await BookingFacade.MarkerNoShowAsync(bookingId);
+        await HentBookinger();
+    }
+
+    private async Task Afslut(Guid bookingId)
+    {
+        await BookingFacade.AfslutBookingAsync(bookingId);
+        await HentBookinger();
+    }
+
+    private static string GetStatusClass(string status)
+    {
+        return status.ToLowerInvariant() switch
+        {
+            "aktiv" => "booking-status--active",
+            "ankommet" => "booking-status--arrived",
+            "afsluttet" => "booking-status--completed",
+            "aflyst" => "booking-status--cancelled",
+            "noshow" => "booking-status--noshow",
+            _ => "booking-status--default"
+        };
+    }
+}
+
+<style>
+    .booking-admin {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        color: #111827;
+    }
+
+    .booking-admin__header {
+        margin-bottom: 1.5rem;
+    }
+
+    .booking-admin__header h1 {
+        margin: 0 0 0.4rem;
+        font-size: 2.25rem;
+        font-weight: 700;
+    }
+
+    .booking-admin__header p {
+        margin: 0;
+        color: #4b5563;
+    }
+
+    .booking-admin__toolbar {
+        display: flex;
+        align-items: end;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #f9fafb;
+    }
+
+    .booking-admin__toolbar h2 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .booking-admin__filter {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .booking-admin__filter label {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .booking-admin__date {
+        padding: 0.45rem 0.65rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font: inherit;
+    }
+
+    .booking-admin__empty {
+        padding: 1rem;
+        border: 1px dashed #d1d5db;
+        border-radius: 8px;
+        color: #4b5563;
+        background: #f9fafb;
+    }
+
+    .booking-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #e5e7eb;
+        background: #ffffff;
+    }
+
+    .booking-table caption {
+        caption-side: top;
+        margin-bottom: 0.75rem;
+        text-align: left;
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .booking-table th,
+    .booking-table td {
+        padding: 0.85rem;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .booking-table th {
+        background: #f3f4f6;
+        color: #374151;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .booking-table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    .booking-status {
+        display: inline-flex;
+        align-items: center;
+        min-width: 5rem;
+        justify-content: center;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .booking-status--active {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .booking-status--arrived {
+        background: #e0f2fe;
+        color: #075985;
+    }
+
+    .booking-status--completed {
+        background: #ede9fe;
+        color: #5b21b6;
+    }
+
+    .booking-status--cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .booking-status--noshow {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .booking-status--default {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .booking-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        min-width: 18rem;
+    }
+
+    .booking-actions__button {
+        padding: 0.45rem 0.7rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #111827;
+        font: inherit;
+        cursor: pointer;
+    }
+
+    .booking-actions__button:hover {
+        background: #f3f4f6;
+    }
+
+    .booking-actions__button--danger {
+        border-color: #fecaca;
+        background: #fff1f2;
+        color: #991b1b;
+    }
+
+    @@media (max-width: 900px) {
+        .booking-admin {
+            padding: 1rem;
+        }
+
+        .booking-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    }
+</style>
+

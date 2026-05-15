@@ -1,7 +1,10 @@
-﻿using BookRight.Facade.Contracts.Bookinger;
+﻿using BookRight.Domain.Interfaces;
+using BookRight.Facade.Contracts.Bookinger;
 using BookRight.Facade.Interfaces;
-using BookRight.Domain.Interfaces;
 using BookRight.UseCases.Commands;
+using BookRight.UseCases.Commands.BookingStatus.Commands;
+using BookRight.UseCases.Commands.BookingStatus.Handlers;
+using BookRight.UseCases.DTOs;
 using BookRight.UseCases.Queries;
 
 namespace BookRight.Facade.Services
@@ -13,7 +16,21 @@ namespace BookRight.Facade.Services
         private readonly IKlinikRepository _klinikRepository;
         private readonly IBehandlerRepository _behandlerRepository;
         private readonly IBehandlingstypeRepository _behandlingstypeRepository;
+        private readonly AflysBookingHandler _aflysBookingHandler;
+        private readonly AnkommetBookingHandler _ankommetBookingHandler;
+        private readonly AfslutBookingHandler _afslutBookingHandler;
+        private readonly NoShowBookingHandler _noShowBookingHandler;
+        private readonly HentBookingHandler _hentBookingHandler;
 
+        public BookingFacade(OpretBookingHandler opretBookingHandler, 
+            IKlinikRepository klinikRepository, 
+            IBehandlerRepository behandlerRepository, 
+            IBehandlingstypeRepository behandlingstypeRepository,
+            AflysBookingHandler aflysBookingHandler,
+            AnkommetBookingHandler ankommetBookingHandler,
+            AfslutBookingHandler afslutBookingHandler,
+            HentBookingHandler hentBookingHandler,
+            NoShowBookingHandler noShowBookingHandler) 
         public BookingFacade(OpretBookingHandler opretBookingHandler, HentKundehistorikHandler hentKundehistorikHandler, IKlinikRepository klinikRepository, IBehandlerRepository behandlerRepository, IBehandlingstypeRepository behandlingstypeRepository) 
         {
             _opretBookingHandler = opretBookingHandler;
@@ -21,6 +38,11 @@ namespace BookRight.Facade.Services
             _klinikRepository = klinikRepository;
             _behandlerRepository = behandlerRepository;
             _behandlingstypeRepository = behandlingstypeRepository;
+            _aflysBookingHandler = aflysBookingHandler;
+            _afslutBookingHandler = afslutBookingHandler;
+            _ankommetBookingHandler = ankommetBookingHandler;
+            _noShowBookingHandler = noShowBookingHandler;
+            _hentBookingHandler = hentBookingHandler;
         }
 
         public async Task<BookingResponse> OpretBookingAsync(OpretBookingRequest request)
@@ -91,6 +113,31 @@ namespace BookRight.Facade.Services
                 Pris = b.Pris,
                 VarighedMinutter = b.VarighedMinutter
             });
+        }
+
+
+        public Task<bool> AflysBookingAsync(Guid bookingId)
+        {
+            return _aflysBookingHandler.HandleAsync(new AflysBookingCommand(bookingId));
+        }
+
+        public Task<bool> AfslutBookingAsync(Guid bookingId)
+        {
+            return _afslutBookingHandler.HandleAsync(new AfslutBookingCommand(bookingId));
+        }
+
+        public Task<bool> MarkerAnkommetAsync(Guid bookingId)
+        {
+            return _ankommetBookingHandler.HandleAsync(new MarkerAnkommetCommand(bookingId));
+        }
+
+        public Task<bool> MarkerNoShowAsync(Guid bookingId)
+        {
+            return _noShowBookingHandler.HandleAsync(new MarkerNoShowCommand(bookingId));
+        }
+        public Task<List<BookingKalenderDto>> HentBookingerForDatoAsync(DateOnly dato)
+        {
+            return _hentBookingHandler.HandleAsync(new HentBookingerQuery(dato));
         }
 
         // Henter kundehistorik fra use case-laget og mapper den til DTOs, som UI kan vise

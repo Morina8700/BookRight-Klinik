@@ -51,6 +51,7 @@ namespace BookRight.Domain.Aggregates
         // Statusmetoder (forretningsregler)
         public void Aflys()
         {
+            // En booking der allerede er afsluttet, må ikke aflyses bagefter.
             if (Status == BookingStatus.Afsluttet)
                 throw new InvalidOperationException("En afsluttet booking kan ikke aflyses");
             Status = BookingStatus.Aflyst;
@@ -58,6 +59,7 @@ namespace BookRight.Domain.Aggregates
 
         public void MarkerAnkommet()
         {
+            // Kun aktive bookinger kan markeres som ankommet.
             if (Status != BookingStatus.Aktiv)
                 throw new InvalidOperationException("Kun en aktiv booking kan markeres som ankommet");
             Status = BookingStatus.Ankommet;
@@ -65,6 +67,7 @@ namespace BookRight.Domain.Aggregates
 
         public void MarkerAfsluttet()
         {
+            // En booking skal først være markeret som ankommet, før den kan afsluttes.
             if (Status != BookingStatus.Ankommet)
                 throw new InvalidOperationException("Booking skal være ankommet før den kan afsluttes");
             Status = BookingStatus.Afsluttet;
@@ -72,6 +75,7 @@ namespace BookRight.Domain.Aggregates
 
         public void MarkerNoShow()
         {
+            // No-show betyder, at kunden ikke mødte op til en aktiv booking.
             if (Status != BookingStatus.Aktiv)
                 throw new InvalidOperationException("Kun en aktiv booking kan markeres som NoShow");
             Status = BookingStatus.NoShow;
