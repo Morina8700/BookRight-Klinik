@@ -28,6 +28,8 @@ namespace BookRight.Infrastructure.DependencyInjection
             services.AddScoped<IBehandlingstypeRepository, BehandlingstypeRepository>();
             services.AddScoped<IKampagneRepository, KampagneRepository>();
             services.AddScoped<IBookingStatusRepository, BookingRepository>();
+            services.AddScoped<IBookingQueryRepository, BookingRepository>();
+
 
 
             // Handlers
@@ -38,6 +40,8 @@ namespace BookRight.Infrastructure.DependencyInjection
             services.AddScoped<AfslutBookingHandler>();
             services.AddScoped<NoShowBookingHandler>();
             services.AddScoped<AnkommetBookingHandler>();
+            services.AddScoped<HentBookingHandler>();
+
 
             // Facades
             services.AddScoped<IKundeFacade, KundeFacade>();

@@ -1,9 +1,11 @@
-﻿using BookRight.Facade.Contracts.Bookinger;
+﻿using BookRight.Domain.Interfaces;
+using BookRight.Facade.Contracts.Bookinger;
 using BookRight.Facade.Interfaces;
-using BookRight.Domain.Interfaces;
 using BookRight.UseCases.Commands;
-using BookRight.UseCases.Commands.BookingStatus.Handlers;
 using BookRight.UseCases.Commands.BookingStatus.Commands;
+using BookRight.UseCases.Commands.BookingStatus.Handlers;
+using BookRight.UseCases.DTOs;
+using BookRight.UseCases.Queries;
 
 namespace BookRight.Facade.Services
 {
@@ -17,6 +19,7 @@ namespace BookRight.Facade.Services
         private readonly AnkommetBookingHandler _ankommetBookingHandler;
         private readonly AfslutBookingHandler _afslutBookingHandler;
         private readonly NoShowBookingHandler _noShowBookingHandler;
+        private readonly HentBookingHandler _hentBookingHandler;
 
         public BookingFacade(OpretBookingHandler opretBookingHandler, 
             IKlinikRepository klinikRepository, 
@@ -25,6 +28,7 @@ namespace BookRight.Facade.Services
             AflysBookingHandler aflysBookingHandler,
             AnkommetBookingHandler ankommetBookingHandler,
             AfslutBookingHandler afslutBookingHandler,
+            HentBookingHandler hentBookingHandler,
             NoShowBookingHandler noShowBookingHandler) 
         {
             _opretBookingHandler = opretBookingHandler;
@@ -35,6 +39,7 @@ namespace BookRight.Facade.Services
             _afslutBookingHandler = afslutBookingHandler;
             _ankommetBookingHandler = ankommetBookingHandler;
             _noShowBookingHandler = noShowBookingHandler;
+            _hentBookingHandler = hentBookingHandler;
         }
 
         public async Task<BookingResponse> OpretBookingAsync(OpretBookingRequest request)
@@ -127,5 +132,10 @@ namespace BookRight.Facade.Services
         {
             return _noShowBookingHandler.HandleAsync(new MarkerNoShowCommand(bookingId));
         }
+        public Task<List<BookingKalenderDto>> HentBookingerForDatoAsync(DateOnly dato)
+        {
+            return _hentBookingHandler.HandleAsync(new HentBookingerQuery(dato));
+        }
+
     }
 }
