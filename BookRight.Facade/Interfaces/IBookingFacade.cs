@@ -22,5 +22,6 @@ namespace BookRight.Facade.Interfaces
         Task<bool> AfslutBookingAsync(Guid bookingId);
         Task<bool>MarkerAnkommetAsync(Guid bookingId);
         Task<bool> MarkerNoShowAsync(Guid bookingId);
+        Task<IEnumerable<KundehistorikDto>> HentKundehistorikAsync(Guid kundeId);
     }
 }

@@ -12,6 +12,7 @@ namespace BookRight.Facade.Services
     public class BookingFacade : IBookingFacade
     {
         private readonly OpretBookingHandler _opretBookingHandler;
+        private readonly HentKundehistorikHandler _hentKundehistorikHandler;
         private readonly IKlinikRepository _klinikRepository;
         private readonly IBehandlerRepository _behandlerRepository;
         private readonly IBehandlingstypeRepository _behandlingstypeRepository;
@@ -30,8 +31,10 @@ namespace BookRight.Facade.Services
             AfslutBookingHandler afslutBookingHandler,
             HentBookingHandler hentBookingHandler,
             NoShowBookingHandler noShowBookingHandler) 
+        public BookingFacade(OpretBookingHandler opretBookingHandler, HentKundehistorikHandler hentKundehistorikHandler, IKlinikRepository klinikRepository, IBehandlerRepository behandlerRepository, IBehandlingstypeRepository behandlingstypeRepository) 
         {
             _opretBookingHandler = opretBookingHandler;
+            _hentKundehistorikHandler = hentKundehistorikHandler;
             _klinikRepository = klinikRepository;
             _behandlerRepository = behandlerRepository;
             _behandlingstypeRepository = behandlingstypeRepository;
@@ -137,5 +140,23 @@ namespace BookRight.Facade.Services
             return _hentBookingHandler.HandleAsync(new HentBookingerQuery(dato));
         }
 
+        // Henter kundehistorik fra use case-laget og mapper den til DTOs, som UI kan vise
+        public async Task<IEnumerable<KundehistorikDto>> HentKundehistorikAsync(Guid kundeId)
+        {
+            var historik = await _hentKundehistorikHandler.HandleAsync(kundeId);
+
+            return historik.Select(h => new KundehistorikDto
+            {
+                BookingId = h.BookingId,
+                StartTid = h.StartTid,
+                SlutTid = h.SlutTid,
+                BehandlingstypeNavn = h.BehandlingstypeNavn,
+                BehandlerNavn = h.BehandlerNavn,
+                KlinikNavn = h.KlinikNavn,
+                Status = h.Status.ToString(),
+                PrisMedRabat = h.PrisMedRabat,
+                AnvendtRabatType = h.AnvendtRabatType
+            });
+        }
     }
 }

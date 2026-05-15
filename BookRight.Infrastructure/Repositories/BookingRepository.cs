@@ -87,5 +87,25 @@ namespace BookRight.Infrastructure.Repositories
     ).ToListAsync();
         }
 
+        // Henter kundens tidligere bookinger, som er relevante for kundehistorik
+        public async Task<IEnumerable<KundehistorikPost>> HentKundehistorikAsync(Guid kundeId)
+        {
+            return await _context.Bookinger
+                .Where(b => b.KundeId == kundeId &&
+                    (b.Status == BookingStatus.Afsluttet ||
+                     b.Status == BookingStatus.Aflyst ||
+                     b.Status == BookingStatus.NoShow))
+                .OrderByDescending(b => b.StartTid)
+                .Select(b => new KundehistorikPost
+                {
+                    BookingId = b.BookingId,
+                    StartTid = b.StartTid,
+                    SlutTid = b.SlutTid,
+                    Status = b.Status,
+                    PrisMedRabat = b.PrisMedRabat,
+                    AnvendtRabatType = b.AnvendtRabatType
+                })
+                .ToListAsync();
+        }
     }
 }
