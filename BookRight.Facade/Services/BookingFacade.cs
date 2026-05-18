@@ -22,16 +22,11 @@ namespace BookRight.Facade.Services
         private readonly NoShowBookingHandler _noShowBookingHandler;
         private readonly HentBookingHandler _hentBookingHandler;
 
-        public BookingFacade(OpretBookingHandler opretBookingHandler, 
-            IKlinikRepository klinikRepository, 
-            IBehandlerRepository behandlerRepository, 
-            IBehandlingstypeRepository behandlingstypeRepository,
-            AflysBookingHandler aflysBookingHandler,
-            AnkommetBookingHandler ankommetBookingHandler,
-            AfslutBookingHandler afslutBookingHandler,
-            HentBookingHandler hentBookingHandler,
-            NoShowBookingHandler noShowBookingHandler) 
-        public BookingFacade(OpretBookingHandler opretBookingHandler, HentKundehistorikHandler hentKundehistorikHandler, IKlinikRepository klinikRepository, IBehandlerRepository behandlerRepository, IBehandlingstypeRepository behandlingstypeRepository) 
+        public BookingFacade(OpretBookingHandler opretBookingHandler, HentKundehistorikHandler hentKundehistorikHandler, 
+            IKlinikRepository klinikRepository, IBehandlerRepository behandlerRepository, IBehandlingstypeRepository behandlingstypeRepository,
+            AflysBookingHandler aflysBookingHandler, AnkommetBookingHandler ankommetBookingHandler, AfslutBookingHandler afslutBookingHandler, HentBookingHandler hentBookingHandler,
+              NoShowBookingHandler noShowBookingHandler)
+            
         {
             _opretBookingHandler = opretBookingHandler;
             _hentKundehistorikHandler = hentKundehistorikHandler;
