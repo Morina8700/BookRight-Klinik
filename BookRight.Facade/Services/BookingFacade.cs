@@ -130,10 +130,25 @@ namespace BookRight.Facade.Services
         {
             return _noShowBookingHandler.HandleAsync(new MarkerNoShowCommand(bookingId));
         }
-        public Task<List<BookingKalenderDto>> HentBookingerForDatoAsync(DateOnly dato)
+        public async Task<List<BookingKalenderResponse>> HentBookingerForDatoAsync(DateOnly dato)
         {
-            return _hentBookingHandler.HandleAsync(new HentBookingerQuery(dato));
+            var bookinger = await _hentBookingHandler.HandleAsync(
+                new HentBookingerQuery(dato));
+
+            return bookinger.Select(b => new BookingKalenderResponse(
+                b.BookingId,
+                b.KundeNavn,
+                b.BehandlerNavn,
+                b.BehandlingstypeNavn,
+                b.StartTid,
+                b.SlutTid,
+                b.Status,
+                b.PrisUdenRabat,
+                b.PrisMedRabat,
+                b.AnvendtRabatType
+            )).ToList();
         }
+
 
         // Henter kundehistorik fra use case-laget og mapper den til DTOs, som UI kan vise
         public async Task<IEnumerable<KundehistorikDto>> HentKundehistorikAsync(Guid kundeId)

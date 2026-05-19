@@ -12,7 +12,7 @@ namespace BookRight.Facade.Interfaces
         Task<IEnumerable<BehandlingstypeDto>> HentAlleBehandlingstyperAsync();
 
         //Query
-        Task<List<BookingKalenderDto>> HentBookingerForDatoAsync(DateOnly dato);
+        Task<List<BookingKalenderResponse>> HentBookingerForDatoAsync(DateOnly dato);
 
 
 
