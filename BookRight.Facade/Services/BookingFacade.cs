@@ -1,10 +1,13 @@
-﻿using BookRight.Domain.Interfaces;
-using BookRight.Facade.Contracts.Bookinger;
+﻿using BookRight.Facade.Contracts.Bookinger;
 using BookRight.Facade.Interfaces;
-using BookRight.UseCases.Commands;
-using BookRight.UseCases.Commands.BookingStatus.Commands;
-using BookRight.UseCases.Commands.BookingStatus.Handlers;
-using BookRight.UseCases.Queries;
+using BookRight.UseCases.Commands.Booking.OpretBooking;
+using BookRight.UseCases.Commands.Booking.Status.Commands;
+using BookRight.UseCases.Commands.Booking.Status.Handlers;
+using BookRight.UseCases.Queries.Behandler;
+using BookRight.UseCases.Queries.Behandlingstype;
+using BookRight.UseCases.Queries.Kalender;
+using BookRight.UseCases.Queries.Klinik;
+using BookRight.UseCases.Queries.Kundehistorik;
 
 namespace BookRight.Facade.Services
 {
@@ -12,29 +15,35 @@ namespace BookRight.Facade.Services
     {
         private readonly OpretBookingHandler _opretBookingHandler;
         private readonly HentKundehistorikHandler _hentKundehistorikHandler;
-        private readonly IKlinikRepository _klinikRepository;
-        private readonly IBehandlerRepository _behandlerRepository;
-        private readonly IBehandlingstypeRepository _behandlingstypeRepository;
+        private readonly HentAlleKlinikkerHandler _hentAlleKlinikkerHandler;
+        private readonly HentAlleBehandlereHandler _hentAlleBehandlereHandler;
+        private readonly HentAlleBehandlingstyperHandler _hentAlleBehandlingstyperHandler;
         private readonly AflysBookingHandler _aflysBookingHandler;
         private readonly AnkommetBookingHandler _ankommetBookingHandler;
         private readonly AfslutBookingHandler _afslutBookingHandler;
         private readonly NoShowBookingHandler _noShowBookingHandler;
         private readonly HentBookingHandler _hentBookingHandler;
 
-        public BookingFacade(OpretBookingHandler opretBookingHandler, HentKundehistorikHandler hentKundehistorikHandler, 
-            IKlinikRepository klinikRepository, IBehandlerRepository behandlerRepository, IBehandlingstypeRepository behandlingstypeRepository,
-            AflysBookingHandler aflysBookingHandler, AnkommetBookingHandler ankommetBookingHandler, AfslutBookingHandler afslutBookingHandler, HentBookingHandler hentBookingHandler,
-              NoShowBookingHandler noShowBookingHandler)
-            
+        public BookingFacade(
+            OpretBookingHandler opretBookingHandler,
+            HentKundehistorikHandler hentKundehistorikHandler,
+            HentAlleKlinikkerHandler hentAlleKlinikkerHandler,
+            HentAlleBehandlereHandler hentAlleBehandlereHandler,
+            HentAlleBehandlingstyperHandler hentAlleBehandlingstyperHandler,
+            AflysBookingHandler aflysBookingHandler,
+            AnkommetBookingHandler ankommetBookingHandler,
+            AfslutBookingHandler afslutBookingHandler,
+            HentBookingHandler hentBookingHandler,
+            NoShowBookingHandler noShowBookingHandler)
         {
             _opretBookingHandler = opretBookingHandler;
             _hentKundehistorikHandler = hentKundehistorikHandler;
-            _klinikRepository = klinikRepository;
-            _behandlerRepository = behandlerRepository;
-            _behandlingstypeRepository = behandlingstypeRepository;
+            _hentAlleKlinikkerHandler = hentAlleKlinikkerHandler;
+            _hentAlleBehandlereHandler = hentAlleBehandlereHandler;
+            _hentAlleBehandlingstyperHandler = hentAlleBehandlingstyperHandler;
             _aflysBookingHandler = aflysBookingHandler;
-            _afslutBookingHandler = afslutBookingHandler;
             _ankommetBookingHandler = ankommetBookingHandler;
+            _afslutBookingHandler = afslutBookingHandler;
             _noShowBookingHandler = noShowBookingHandler;
             _hentBookingHandler = hentBookingHandler;
         }
@@ -66,49 +75,48 @@ namespace BookRight.Facade.Services
 
         public async Task<IEnumerable<KlinikDto>> HentAlleKlinikkerAsync()
         {
-            // Henter klinikker fra databasen og laver dem om til DTOs til dropdown
-            var klinikker = await _klinikRepository.HentAlleAsync();
+            // Henter klinikker via use case og laver dem om til DTOs til dropdown
+            var klinikker = await _hentAlleKlinikkerHandler.HandleAsync();
 
             return klinikker.Select(k => new KlinikDto
             {
                 KlinikId = k.KlinikId,
-                Navn = k.Navn ?? string.Empty,
-                Adresse = k.Adresse ?? string.Empty,
+                Navn = k.Navn,
+                Adresse = k.Adresse,
                 AntalRum = k.AntalRum
             });
         }
 
         public async Task<IEnumerable<BehandlerDto>> HentAlleBehandlereAsync()
         {
-            // Henter behandlere fra databasen og laver dem om til DTOs til dropdown
-            var behandlere = await _behandlerRepository.HentAlleAsync();
+            // Henter behandlere via use case og laver dem om til DTOs til dropdown
+            var behandlere = await _hentAlleBehandlereHandler.HandleAsync();
 
             return behandlere.Select(b => new BehandlerDto
             {
                 BehandlerId = b.BehandlerId,
-                Fornavn = b.Fornavn ?? string.Empty,
-                Efternavn = b.Efternavn ?? string.Empty,
+                Fornavn = b.Fornavn,
+                Efternavn = b.Efternavn,
                 // Gemmer id på de klinikker, hvor behandleren arbejder
-                KlinikIds = b.Klinikker.Select(k => k.KlinikId).ToList(),
+                KlinikIds = b.KlinikIds.ToList(),
                 // Gemmer id på de behandlingstyper, som behandleren må udføre
-                BehandlingstypeIds = b.Behandlingstyper.Select(bt => bt.BehandlingstypeId).ToList()
+                BehandlingstypeIds = b.BehandlingstypeIds.ToList()
             });
         }
 
         public async Task<IEnumerable<BehandlingstypeDto>> HentAlleBehandlingstyperAsync()
         {
-            // Henter behandlingstyper fra databasen og laver dem om til DTOs til dropdown
-            var behandlingstyper = await _behandlingstypeRepository.HentAlleAsync();
+            // Henter behandlingstyper via use case og laver dem om til DTOs til dropdown
+            var behandlingstyper = await _hentAlleBehandlingstyperHandler.HandleAsync();
 
             return behandlingstyper.Select(b => new BehandlingstypeDto
             {
                 BehandlingstypeId = b.BehandlingstypeId,
-                Navn = b.Navn ?? string.Empty,
+                Navn = b.Navn,
                 Pris = b.Pris,
                 VarighedMinutter = b.VarighedMinutter
             });
         }
-
 
         public Task<bool> AflysBookingAsync(Guid bookingId)
         {
@@ -129,8 +137,10 @@ namespace BookRight.Facade.Services
         {
             return _noShowBookingHandler.HandleAsync(new MarkerNoShowCommand(bookingId));
         }
+
         public async Task<List<BookingKalenderResponse>> HentBookingerForDatoAsync(DateOnly dato)
         {
+            // Henter bookinger for dato via use case og mapper til response til UI
             var bookinger = await _hentBookingHandler.HandleAsync(
                 new HentBookingerQuery(dato));
 
@@ -147,7 +157,6 @@ namespace BookRight.Facade.Services
                 b.AnvendtRabatType
             )).ToList();
         }
-
 
         // Henter kundehistorik fra use case-laget og mapper den til DTOs, som UI kan vise
         public async Task<IEnumerable<KundehistorikDto>> HentKundehistorikAsync(Guid kundeId)

@@ -1,4 +1,5 @@
 ﻿using BookRight.Facade.Contracts.Bookinger;
+
 namespace BookRight.Facade.Interfaces
 {
     // Definerer de bookingfunktioner som UI/API kan kalde

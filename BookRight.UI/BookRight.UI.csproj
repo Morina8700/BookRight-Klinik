@@ -17,7 +17,6 @@
   <ItemGroup>
     <ProjectReference Include="..\BookRight.Facade\BookRight.Facade.csproj" />
     <ProjectReference Include="..\BookRight.Infrastructure\BookRight.Infrastructure.csproj" />
-    <ProjectReference Include="..\BookRight.UseCases\BookRight.UseCases.csproj" />
   </ItemGroup>
 
 </Project>
