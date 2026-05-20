@@ -1,23 +1,19 @@
-using BookRight.Domain.Interfaces;
-using BookRight.Domain.Models;
+namespace BookRight.UseCases.Queries.Kundehistorik;
 
-namespace BookRight.UseCases.Queries.Kundehistorik
+public class HentKundehistorikHandler
 {
-    public class HentKundehistorikHandler
+    private readonly IKundehistorikQueryRepository _kundehistorikQueryRepository;
+
+    public HentKundehistorikHandler(IKundehistorikQueryRepository kundehistorikQueryRepository)
     {
-        private readonly IBookingRepository _bookingRepository;
+        _kundehistorikQueryRepository = kundehistorikQueryRepository;
+    }
 
-        public HentKundehistorikHandler(IBookingRepository bookingRepository)
-        {
-            _bookingRepository = bookingRepository;
-        }
+    public async Task<IEnumerable<KundehistorikPost>> HandleAsync(Guid kundeId)
+    {
+        if (kundeId == Guid.Empty)
+            throw new ArgumentException("KundeId må ikke være tomt");
 
-        // Henter historik for den valgte kunde
-        public async Task<IEnumerable<KundehistorikPost>> HandleAsync(Guid kundeId)
-        {
-            if (kundeId == Guid.Empty) throw new ArgumentException("KundeId må ikke være tomt");
-
-            return await _bookingRepository.HentKundehistorikAsync(kundeId);
-        }
+        return await _kundehistorikQueryRepository.HentForKundeAsync(kundeId);
     }
 }

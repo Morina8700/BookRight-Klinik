@@ -1,5 +1,4 @@
-using BookRight.Domain.Interfaces;
-using BookRight.Domain.Models;
+using BookRight.Domain.Enums;
 using BookRight.UseCases.Queries.Kundehistorik;
 using Moq;
 
@@ -11,15 +10,15 @@ public class HentKundehistorikHandlerTests
     public async Task HandleAsync_TomKundeId_KasterArgumentException()
     {
         // Arrange
-        var bookingRepo = new Mock<IBookingRepository>();
-        var handler = new HentKundehistorikHandler(bookingRepo.Object);
+        var queryRepo = new Mock<IKundehistorikQueryRepository>();
+        var handler = new HentKundehistorikHandler(queryRepo.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(
             () => handler.HandleAsync(Guid.Empty));
 
-        bookingRepo.Verify(
-            r => r.HentKundehistorikAsync(It.IsAny<Guid>()),
+        queryRepo.Verify(
+            r => r.HentForKundeAsync(It.IsAny<Guid>()),
             Times.Never);
     }
 
@@ -30,30 +29,30 @@ public class HentKundehistorikHandlerTests
         var kundeId = Guid.NewGuid();
         var forventet = new List<KundehistorikPost>
         {
-            new()
-            {
-                BookingId = Guid.NewGuid(),
-                StartTid = DateTime.Today.AddHours(10),
-                SlutTid = DateTime.Today.AddHours(11),
-                BehandlingstypeNavn = "Massage",
-                BehandlerNavn = "Dr. Test",
-                KlinikNavn = "BookRight København",
-                PrisMedRabat = 500m
-            }
+            new(
+                Guid.NewGuid(),
+                DateTime.Today.AddHours(10),
+                DateTime.Today.AddHours(11),
+                "Massage",
+                "Dr. Test",
+                "BookRight København",
+                BookingStatus.Afsluttet,
+                500m,
+                null)
         };
 
-        var bookingRepo = new Mock<IBookingRepository>();
-        bookingRepo
-            .Setup(r => r.HentKundehistorikAsync(kundeId))
+        var queryRepo = new Mock<IKundehistorikQueryRepository>();
+        queryRepo
+            .Setup(r => r.HentForKundeAsync(kundeId))
             .ReturnsAsync(forventet);
 
-        var handler = new HentKundehistorikHandler(bookingRepo.Object);
+        var handler = new HentKundehistorikHandler(queryRepo.Object);
 
         // Act
         var resultat = await handler.HandleAsync(kundeId);
 
         // Assert
         Assert.Same(forventet, resultat);
-        bookingRepo.Verify(r => r.HentKundehistorikAsync(kundeId), Times.Once);
+        queryRepo.Verify(r => r.HentForKundeAsync(kundeId), Times.Once);
     }
 }
