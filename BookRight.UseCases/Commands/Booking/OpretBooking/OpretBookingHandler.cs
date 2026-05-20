@@ -1,10 +1,10 @@
-﻿using BookRight.Domain.Aggregates;
 using BookRight.Domain.Enums;
 using BookRight.Domain.Interfaces;
 using BookRight.Domain.Strategies.Rabatberegner;
 using BookRight.Domain.ValueObjects;
+using DomainBooking = BookRight.Domain.Aggregates.Booking;
 
-namespace BookRight.UseCases.Commands
+namespace BookRight.UseCases.Commands.Booking.OpretBooking
 {
     // Udfører forretningslogikken for at oprette en booking
     public class OpretBookingHandler
@@ -55,7 +55,7 @@ namespace BookRight.UseCases.Commands
             if (!behandler.ArbejderPå(command.KlinikId))
                 throw new InvalidOperationException("Behandler arbejder ikke på den valgte klinik");
 
-            // 3. Valider at behandleren er autoriseret til behandlingstypen 
+            // 3. Valider at behandleren er autoriseret til behandlingstypen
             if (!behandler.KanUdføre(behandlingstype))
                 throw new InvalidOperationException("Behandler er ikke autoriseret til behandlingstypen");
 
@@ -84,8 +84,8 @@ namespace BookRight.UseCases.Commands
             if (rabatResultat.RabatType == RabatType.Fødselsdag)
                 kunde.MarkerFoedselsdagsrabatBrugt();
 
-            // 7. Opret booking 
-            var booking = new Booking(
+            // 7. Opret booking
+            var booking = new DomainBooking(
                 command.KundeId,
                 command.BehandlerId,
                 command.KlinikId,
@@ -96,9 +96,9 @@ namespace BookRight.UseCases.Commands
                 rabatResultat.PrisMedRabat.Belob,
                 rabatResultat.RabatType.ToString());
 
-            // 8. Gem booking 
+            // 8. Gem booking
             await _bookingRepository.AddAsync(booking);
-            
+
             // 9. Returner resultat til Facade
             return new OpretBookingResult
             {

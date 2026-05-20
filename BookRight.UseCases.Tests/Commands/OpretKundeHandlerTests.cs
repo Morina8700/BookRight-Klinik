@@ -1,6 +1,6 @@
 using BookRight.Domain.Aggregates;
 using BookRight.Domain.Interfaces;
-using BookRight.UseCases.Commands;
+using BookRight.UseCases.Commands.Kunde;
 using Moq;
 
 namespace BookRight.UseCases.Tests.Commands;

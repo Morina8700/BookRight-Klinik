@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BookRight.UseCases.DTOs
+namespace BookRight.UseCases.Queries.Kalender
 {
-    public record BookingKalenderDto(
+    public record BookingKalenderPost(
         Guid BookingId,
         string KundeNavn,
         string BehandlerNavn,
@@ -15,6 +11,5 @@ namespace BookRight.UseCases.DTOs
         decimal PrisUdenRabat,
         decimal PrisMedRabat,
         string? AnvendtRabatType
-        );
-    
+    );
 }

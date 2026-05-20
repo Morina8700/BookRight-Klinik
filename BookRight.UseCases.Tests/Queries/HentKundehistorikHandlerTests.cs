@@ -1,6 +1,6 @@
 using BookRight.Domain.Interfaces;
 using BookRight.Domain.Models;
-using BookRight.UseCases.Queries;
+using BookRight.UseCases.Queries.Kundehistorik;
 using Moq;
 
 namespace BookRight.UseCases.Tests.Queries;

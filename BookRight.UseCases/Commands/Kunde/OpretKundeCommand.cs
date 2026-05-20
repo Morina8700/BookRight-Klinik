@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BookRight.UseCases.Commands
+namespace BookRight.UseCases.Commands.Kunde
 {
-
     public record OpretKundeCommand(
         string Fornavn,
         string Efternavn,

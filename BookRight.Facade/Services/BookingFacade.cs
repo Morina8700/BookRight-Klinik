@@ -1,11 +1,11 @@
 ﻿using BookRight.Domain.Interfaces;
 using BookRight.Facade.Contracts.Bookinger;
 using BookRight.Facade.Interfaces;
-using BookRight.UseCases.Commands;
-using BookRight.UseCases.Commands.BookingStatus.Commands;
-using BookRight.UseCases.Commands.BookingStatus.Handlers;
-using BookRight.UseCases.DTOs;
-using BookRight.UseCases.Queries;
+using BookRight.UseCases.Commands.Booking.OpretBooking;
+using BookRight.UseCases.Commands.Booking.Status.Commands;
+using BookRight.UseCases.Commands.Booking.Status.Handlers;
+using BookRight.UseCases.Queries.Kalender;
+using BookRight.UseCases.Queries.Kundehistorik;
 
 namespace BookRight.Facade.Services
 {

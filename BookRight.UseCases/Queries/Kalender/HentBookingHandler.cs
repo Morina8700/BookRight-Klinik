@@ -1,9 +1,4 @@
-﻿using BookRight.UseCases.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BookRight.UseCases.Queries
+namespace BookRight.UseCases.Queries.Kalender
 {
     public class HentBookingHandler
     {
@@ -14,7 +9,7 @@ namespace BookRight.UseCases.Queries
             _bookingQueryRepository = bookingQueryRepository;
         }
 
-        public async Task<List<BookingKalenderDto>> HandleAsync(HentBookingerQuery query)
+        public async Task<List<BookingKalenderPost>> HandleAsync(HentBookingerQuery query)
         {
             return await _bookingQueryRepository.HentBookingerForDatoAsync(query.Dato);
         }

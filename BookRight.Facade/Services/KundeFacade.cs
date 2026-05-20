@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using BookRight.Facade.Interfaces;
 using BookRight.Facade.Contracts.Kunder;
-using BookRight.UseCases.Commands;
+using BookRight.UseCases.Commands.Kunde;
 
 
 namespace BookRight.Facade.Services

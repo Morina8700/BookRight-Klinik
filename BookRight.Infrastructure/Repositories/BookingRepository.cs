@@ -3,8 +3,7 @@ using BookRight.Domain.Enums;
 using BookRight.Domain.Interfaces;
 using BookRight.Domain.Models;
 using BookRight.Infrastructure.Persistence;
-using BookRight.UseCases.DTOs;
-using BookRight.UseCases.Queries;
+using BookRight.UseCases.Queries.Kalender;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookRight.Infrastructure.Repositories
@@ -57,7 +56,7 @@ namespace BookRight.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<BookingKalenderDto>> HentBookingerForDatoAsync(DateOnly dato)
+        public async Task<List<BookingKalenderPost>> HentBookingerForDatoAsync(DateOnly dato)
         {
             var start = dato.ToDateTime(TimeOnly.MinValue);
             var slut = dato.ToDateTime(TimeOnly.MaxValue);
@@ -72,7 +71,7 @@ namespace BookRight.Infrastructure.Repositories
             on booking.BehandlingstypeId equals behandlingstype.BehandlingstypeId
         where booking.StartTid >= start && booking.StartTid <= slut
         orderby booking.StartTid
-        select new BookingKalenderDto(
+        select new BookingKalenderPost(
             booking.BookingId,
             kunde.Fornavn + " " + kunde.Efternavn,
             behandler.Fornavn + " " + behandler.Efternavn,

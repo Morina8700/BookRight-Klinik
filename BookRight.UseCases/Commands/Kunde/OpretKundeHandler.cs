@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BookRight.Domain.Aggregates;
 using BookRight.Domain.Interfaces;
+using DomainKunde = BookRight.Domain.Aggregates.Kunde;
 
-namespace BookRight.UseCases.Commands
+namespace BookRight.UseCases.Commands.Kunde
 {
     public class OpretKundeHandler
     {
         private readonly IKundeRepository _kundeRepository;
-        
+
         public OpretKundeHandler(IKundeRepository kundeRepository)
         {
             _kundeRepository = kundeRepository;
@@ -17,7 +14,7 @@ namespace BookRight.UseCases.Commands
 
         public async Task<Guid> HandleAsync(OpretKundeCommand command)
         {
-            var kunde = new Kunde(
+            var kunde = new DomainKunde(
                 command.Fornavn,
                 command.Efternavn,
                 command.Email,

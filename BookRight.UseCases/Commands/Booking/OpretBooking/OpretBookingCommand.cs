@@ -1,4 +1,4 @@
-﻿namespace BookRight.UseCases.Commands
+namespace BookRight.UseCases.Commands.Booking.OpretBooking
 {
     // Input transporteres fra UI til OpretBookingHandler
     public record OpretBookingCommand(

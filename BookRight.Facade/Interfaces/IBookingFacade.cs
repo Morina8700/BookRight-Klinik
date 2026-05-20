@@ -1,5 +1,4 @@
 ﻿using BookRight.Facade.Contracts.Bookinger;
-using BookRight.UseCases.DTOs;
 
 namespace BookRight.Facade.Interfaces
 {

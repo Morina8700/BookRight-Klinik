@@ -3,7 +3,7 @@ using BookRight.Domain.Aggregates;
 using BookRight.Domain.Enums;
 using BookRight.Domain.Interfaces;
 using BookRight.Domain.Strategies.Rabatberegner;
-using BookRight.UseCases.Commands;
+using BookRight.UseCases.Commands.Booking.OpretBooking;
 using Moq;
 
 namespace BookRight.UseCases.Tests.Commands;

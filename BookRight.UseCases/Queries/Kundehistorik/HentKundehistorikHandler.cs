@@ -1,7 +1,7 @@
 using BookRight.Domain.Interfaces;
 using BookRight.Domain.Models;
 
-namespace BookRight.UseCases.Queries
+namespace BookRight.UseCases.Queries.Kundehistorik
 {
     public class HentKundehistorikHandler
     {

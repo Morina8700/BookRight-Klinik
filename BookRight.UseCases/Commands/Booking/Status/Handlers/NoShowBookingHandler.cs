@@ -1,10 +1,7 @@
-﻿using BookRight.Domain.Interfaces;
-using BookRight.UseCases.Commands.BookingStatus.Commands;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using BookRight.Domain.Interfaces;
+using BookRight.UseCases.Commands.Booking.Status.Commands;
 
-namespace BookRight.UseCases.Commands.BookingStatus.Handlers
+namespace BookRight.UseCases.Commands.Booking.Status.Handlers
 {
     public class NoShowBookingHandler
     {
