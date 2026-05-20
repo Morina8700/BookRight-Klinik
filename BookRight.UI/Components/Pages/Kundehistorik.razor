@@ -3,9 +3,8 @@
 @using BookRight.Facade.Contracts.Bookinger
 @using BookRight.Facade.Contracts.Kunder
 @using BookRight.Facade.Interfaces
-@using BookRight.Domain.Interfaces
 @inject IBookingFacade BookingFacade
-@inject IKundeRepository KundeRepository
+@inject IKundeFacade KundeFacade
 
 <main class="opret-booking-side">
     <article class="opret-booking-kort" aria-labelledby="kundehistorik-heading">
@@ -79,17 +78,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var kunder = await KundeRepository.HentAlleAsync();
-
-        alleKunder = kunder.Select(k => new KundeDto
-        {
-            KundeId = k.KundeId,
-            FuldeNavn = $"{k.Fornavn} {k.Efternavn}",
-            Email = k.Email,
-            Telefon = k.Telefon,
-            LoyalitetsNiveau = k.loyalitetsNiveau.ToString()
-        }).ToList();
-
+        alleKunder = (await KundeFacade.HentAlleKunderAsync()).ToList();
         isLoading = false;
     }
 

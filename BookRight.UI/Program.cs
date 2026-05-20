@@ -8,6 +8,10 @@ using BookRight.UseCases.Commands.Booking.Status.Handlers;
 using BookRight.UseCases.Commands.Kunde;
 using BookRight.UseCases.Queries.Kalender;
 using BookRight.UseCases.Queries.Kundehistorik;
+using BookRight.UseCases.Queries.Kunde;
+using BookRight.UseCases.Queries.Klinik;
+using BookRight.UseCases.Queries.Behandler;
+using BookRight.UseCases.Queries.Behandlingstype;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +27,10 @@ builder.Services.AddScoped<AfslutBookingHandler>();
 builder.Services.AddScoped<NoShowBookingHandler>();
 builder.Services.AddScoped<AnkommetBookingHandler>();
 builder.Services.AddScoped<HentBookingHandler>();
+builder.Services.AddScoped<HentAlleKunderHandler>();
+builder.Services.AddScoped<HentAlleKlinikkerHandler>();
+builder.Services.AddScoped<HentAlleBehandlereHandler>();
+builder.Services.AddScoped<HentAlleBehandlingstyperHandler>();
 
 // Domain — Rabatberegner
 builder.Services.AddScoped<IRabatBeregner, LoyalitetsRabatBeregner>();
