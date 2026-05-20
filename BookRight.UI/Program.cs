@@ -1,46 +1,13 @@
-using BookRight.Domain.Strategies.Rabatberegner;
-using BookRight.Facade.Interfaces;
-using BookRight.Facade.Services;
+using BookRight.Facade.DependencyInjection;
 using BookRight.Infrastructure.DependencyInjection;
 using BookRight.UI.Components;
-using BookRight.UseCases.Commands.Booking.OpretBooking;
-using BookRight.UseCases.Commands.Booking.Status.Handlers;
-using BookRight.UseCases.Commands.Kunde;
-using BookRight.UseCases.Queries.Kalender;
-using BookRight.UseCases.Queries.Kundehistorik;
-using BookRight.UseCases.Queries.Kunde;
-using BookRight.UseCases.Queries.Klinik;
-using BookRight.UseCases.Queries.Behandler;
-using BookRight.UseCases.Queries.Behandlingstype;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Infrastructure (DbContext + repositories)
 builder.Services.AddInfrastructure(builder.Configuration);
-
-// Use cases — handlers
-builder.Services.AddScoped<OpretKundeHandler>();
-builder.Services.AddScoped<OpretBookingHandler>();
-builder.Services.AddScoped<HentKundehistorikHandler>();
-builder.Services.AddScoped<AflysBookingHandler>();
-builder.Services.AddScoped<AfslutBookingHandler>();
-builder.Services.AddScoped<NoShowBookingHandler>();
-builder.Services.AddScoped<AnkommetBookingHandler>();
-builder.Services.AddScoped<HentBookingHandler>();
-builder.Services.AddScoped<HentAlleKunderHandler>();
-builder.Services.AddScoped<HentAlleKlinikkerHandler>();
-builder.Services.AddScoped<HentAlleBehandlereHandler>();
-builder.Services.AddScoped<HentAlleBehandlingstyperHandler>();
-
-// Domain — Rabatberegner
-builder.Services.AddScoped<IRabatBeregner, LoyalitetsRabatBeregner>();
-builder.Services.AddScoped<IRabatBeregner, FoedselsdagsRabatBeregner>();
-builder.Services.AddScoped<IRabatBeregner, KampagneRabatBeregner>();
-builder.Services.AddScoped<RabatBeregnerService>();
-
-// Facade
-builder.Services.AddScoped<IKundeFacade, KundeFacade>();
-builder.Services.AddScoped<IBookingFacade, BookingFacade>();
+// BookRight (Use cases + facades)
+builder.Services.AddBookRight();
 
 // Blazor 
 builder.Services.AddRazorComponents()
