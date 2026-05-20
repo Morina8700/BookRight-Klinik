@@ -1,9 +1,4 @@
 ﻿using BookRight.Domain.Enums;
-using BookRight.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace BookRight.Domain.Strategies.Rabatberegner
 {
     public class KampagneRabatBeregner : IRabatBeregner

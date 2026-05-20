@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BookRight.Facade.Contracts.Bookinger
+﻿namespace BookRight.Facade.Contracts.Bookinger
 {
     public record BookingKalenderResponse(
            Guid BookingId,

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BookRight.Facade.Interfaces;
+﻿using BookRight.Facade.Interfaces;
 using BookRight.Facade.Contracts.Kunder;
 using BookRight.UseCases.Commands;
 
@@ -31,6 +28,7 @@ namespace BookRight.Facade.Services
             );
 
             return await _opretKundeHandler.HandleAsync(command);
+            
         }
     }
 }

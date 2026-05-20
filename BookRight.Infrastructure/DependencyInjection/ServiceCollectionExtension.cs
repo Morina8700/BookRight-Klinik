@@ -51,7 +51,6 @@ namespace BookRight.Infrastructure.DependencyInjection
             services.AddScoped<IRabatBeregner, LoyalitetsRabatBeregner>();
             services.AddScoped<IRabatBeregner, FoedselsdagsRabatBeregner>();
             services.AddScoped<IRabatBeregner, KampagneRabatBeregner>();
-
             services.AddScoped<RabatBeregnerService>();
 
 

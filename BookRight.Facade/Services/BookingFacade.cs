@@ -4,7 +4,6 @@ using BookRight.Facade.Interfaces;
 using BookRight.UseCases.Commands;
 using BookRight.UseCases.Commands.BookingStatus.Commands;
 using BookRight.UseCases.Commands.BookingStatus.Handlers;
-using BookRight.UseCases.DTOs;
 using BookRight.UseCases.Queries;
 
 namespace BookRight.Facade.Services
