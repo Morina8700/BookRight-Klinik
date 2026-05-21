@@ -1,4 +1,3 @@
-
 namespace BookRight.Domain.Strategies.Rabatberegner
 {
     public class RabatBeregnerService

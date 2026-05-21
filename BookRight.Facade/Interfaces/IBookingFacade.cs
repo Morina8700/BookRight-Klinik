@@ -1,5 +1,4 @@
 ﻿using BookRight.Facade.Contracts.Bookinger;
-using BookRight.UseCases.DTOs;
 
 namespace BookRight.Facade.Interfaces
 {
@@ -12,7 +11,7 @@ namespace BookRight.Facade.Interfaces
         Task<IEnumerable<BehandlingstypeDto>> HentAlleBehandlingstyperAsync();
 
         //Query
-        Task<List<BookingKalenderDto>> HentBookingerForDatoAsync(DateOnly dato);
+        Task<List<BookingKalenderResponse>> HentBookingerForDatoAsync(DateOnly dato);
 
 
 

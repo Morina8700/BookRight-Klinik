@@ -1,20 +1,22 @@
 ﻿.opret-booking-side {
-    min-height: 100vh;
-    padding: 0.625rem 1rem;
-    background: #eef3fb;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 1.75rem;
+    color: #1f2937;
 }
 
 .opret-booking-kort {
-    width: min(100%, 63rem);
-    margin: 0 auto;
-    padding: 3.75rem 3rem 3rem;
+    width: 100%;
+    margin: 0;
+    padding: 2rem;
     color: #172344;
     background: #fff;
-    border-radius: 0.875rem;
+    border-radius: 8px;
+    box-shadow: 0 16px 32px rgba(31, 41, 55, 0.12);
 }
 
 .opret-booking-header {
-    margin-bottom: 3.5rem;
+    margin-bottom: 2rem;
 }
 
 .brand {
@@ -27,9 +29,9 @@
 
 h1 {
     margin: 0;
-    color: #33415f;
-    font-size: 1.1rem;
-    font-weight: 400;
+    color: #2c287f;
+    font-size: 1.55rem;
+    font-weight: 800;
 }
 
 .opret-booking-form {
@@ -161,6 +163,10 @@ button:focus {
 }
 
 @media (max-width: 48rem) {
+    .opret-booking-side {
+        padding: 1rem;
+    }
+
     .opret-booking-kort {
         padding: 2rem 1.25rem;
     }

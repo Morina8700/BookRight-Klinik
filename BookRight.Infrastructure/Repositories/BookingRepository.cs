@@ -1,18 +1,18 @@
 ﻿using BookRight.Domain.Aggregates;
 using BookRight.Domain.Enums;
 using BookRight.Domain.Interfaces;
-using BookRight.Domain.Models;
+using BookRight.UseCases.Queries.Kundehistorik;
+using BookRight.UseCases.Queries.Kalender;
 using BookRight.Infrastructure.Persistence;
-using BookRight.UseCases.DTOs;
-using BookRight.UseCases.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookRight.Infrastructure.Repositories
 {
-        // INFRASTRUCTURE  (Implementerer IBookingRepository med EF Core)
-    public class BookingRepository : IBookingRepository, IBookingStatusRepository, IBookingQueryRepository
+    // INFRASTRUCTURE  (Implementerer IBookingRepository med EF Core)
+    public class BookingRepository : IBookingRepository, IBookingStatusRepository, IBookingQueryRepository, IKundehistorikQueryRepository
     {
         private readonly BookRightDbContext _context;
+
         public BookingRepository(BookRightDbContext context)
         {
             _context = context;
@@ -57,55 +57,61 @@ namespace BookRight.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<BookingKalenderDto>> HentBookingerForDatoAsync(DateOnly dato)
+        public async Task<List<BookingKalenderPost>> HentBookingerForDatoAsync(DateOnly dato)
         {
             var start = dato.ToDateTime(TimeOnly.MinValue);
             var slut = dato.ToDateTime(TimeOnly.MaxValue);
 
             return await (
-        from booking in _context.Bookinger
-        join kunde in _context.Kunder
-            on booking.KundeId equals kunde.KundeId
-        join behandler in _context.Behandlere
-            on booking.BehandlerId equals behandler.BehandlerId
-        join behandlingstype in _context.Behandlingstyper
-            on booking.BehandlingstypeId equals behandlingstype.BehandlingstypeId
-        where booking.StartTid >= start && booking.StartTid <= slut
-        orderby booking.StartTid
-        select new BookingKalenderDto(
-            booking.BookingId,
-            kunde.Fornavn + " " + kunde.Efternavn,
-            behandler.Fornavn + " " + behandler.Efternavn,
-            behandlingstype.Navn ?? "Ukendt behandling",
-            booking.StartTid,
-            booking.SlutTid,
-            booking.Status.ToString(),
-            booking.PrisUdenRabat,
-            booking.PrisMedRabat,
-            booking.AnvendtRabatType ?? "Ingen"
-        )
-    ).ToListAsync();
+                from booking in _context.Bookinger
+                join kunde in _context.Kunder
+                    on booking.KundeId equals kunde.KundeId
+                join behandler in _context.Behandlere
+                    on booking.BehandlerId equals behandler.BehandlerId
+                join behandlingstype in _context.Behandlingstyper
+                    on booking.BehandlingstypeId equals behandlingstype.BehandlingstypeId
+                where booking.StartTid >= start && booking.StartTid <= slut
+                orderby booking.StartTid
+                select new BookingKalenderPost(
+                    booking.BookingId,
+                    kunde.Fornavn + " " + kunde.Efternavn,
+                    behandler.Fornavn + " " + behandler.Efternavn,
+                    behandlingstype.Navn ?? "Ukendt behandling",
+                    booking.StartTid,
+                    booking.SlutTid,
+                    booking.Status.ToString(),
+                    booking.PrisUdenRabat,
+                    booking.PrisMedRabat,
+                    booking.AnvendtRabatType ?? "Ingen"
+                )
+            ).ToListAsync();
         }
 
         // Henter kundens tidligere bookinger, som er relevante for kundehistorik
-        public async Task<IEnumerable<KundehistorikPost>> HentKundehistorikAsync(Guid kundeId)
+        public async Task<IEnumerable<KundehistorikPost>> HentForKundeAsync(Guid kundeId)
         {
-            return await _context.Bookinger
-                .Where(b => b.KundeId == kundeId &&
-                    (b.Status == BookingStatus.Afsluttet ||
-                     b.Status == BookingStatus.Aflyst ||
-                     b.Status == BookingStatus.NoShow))
-                .OrderByDescending(b => b.StartTid)
-                .Select(b => new KundehistorikPost
-                {
-                    BookingId = b.BookingId,
-                    StartTid = b.StartTid,
-                    SlutTid = b.SlutTid,
-                    Status = b.Status,
-                    PrisMedRabat = b.PrisMedRabat,
-                    AnvendtRabatType = b.AnvendtRabatType
-                })
-                .ToListAsync();
+            return await (
+                from booking in _context.Bookinger
+                join behandler in _context.Behandlere
+                    on booking.BehandlerId equals behandler.BehandlerId
+                join behandlingstype in _context.Behandlingstyper
+                    on booking.BehandlingstypeId equals behandlingstype.BehandlingstypeId
+                join klinik in _context.Klinikker
+                    on booking.KlinikId equals klinik.KlinikId
+                where booking.KundeId == kundeId
+                orderby booking.StartTid descending
+                select new KundehistorikPost(
+                    booking.BookingId,
+                    booking.StartTid,
+                    booking.SlutTid,
+                    behandlingstype.Navn ?? string.Empty,
+                    (behandler.Fornavn ?? "") + " " + (behandler.Efternavn ?? ""),
+                    klinik.Navn ?? string.Empty,
+                    booking.Status,
+                    booking.PrisMedRabat,
+                    booking.AnvendtRabatType
+                )
+            ).ToListAsync();
         }
     }
 }

@@ -3,14 +3,14 @@
 @using BookRight.Facade.Contracts.Bookinger
 @using BookRight.Facade.Contracts.Kunder
 @using BookRight.Facade.Interfaces
-@using BookRight.Domain.Interfaces
 @inject IBookingFacade BookingFacade
-@inject IKundeRepository KundeRepository
+@inject IKundeFacade KundeFacade
 
 <main class="opret-booking-side">
+    <BookRightTopNav />
+
     <article class="opret-booking-kort" aria-labelledby="opret-booking-heading">
         <header class="opret-booking-header">
-            <p class="brand" aria-label="BookRight">BookRight</p>
             <h1 id="opret-booking-heading">Opret booking</h1>
         </header>
 
@@ -111,6 +111,7 @@
                         </div>
                     }
                 }
+
                 @* Vis pris efter booking *@
                 @if (senesteBookingResponse is not null && senesteBookingResponse.Success)
                 {
@@ -162,17 +163,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var kunder = await KundeRepository.HentAlleAsync();
-
-        alleKunder = kunder.Select(k => new KundeDto
-        {
-            KundeId = k.KundeId,
-            FuldeNavn = $"{k.Fornavn} {k.Efternavn}",
-            Email = k.Email,
-            Telefon = k.Telefon,
-            LoyalitetsNiveau = k.loyalitetsNiveau.ToString()
-        }).ToList();
-
+        alleKunder = (await KundeFacade.HentAlleKunderAsync()).ToList();
         alleKlinikker = (await BookingFacade.HentAlleKlinikkerAsync()).ToList();
         alleBehandlere = (await BookingFacade.HentAlleBehandlereAsync()).ToList();
         alleBehandlingstyper = (await BookingFacade.HentAlleBehandlingstyperAsync()).ToList();
