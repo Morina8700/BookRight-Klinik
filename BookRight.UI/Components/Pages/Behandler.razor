@@ -1,0 +1,137 @@
+﻿@page "/behandlere/opret"
+@rendermode InteractiveServer
+@using BookRight.Facade.Contracts.Behandler
+@using BookRight.Facade.Interfaces
+@using BookRight.Domain.Aggregates
+@using BookRight.Domain.Interfaces
+@inject IBehandlerFacade BehandlerFacade
+@inject IKlinikRepository KlinikRepository
+
+<main class="opret-kunde-side">
+    <article class="opret-kunde-kort" aria-labelledby="opret-behandler-heading">
+        <header class="opret-kunde-header">
+            <p class="brand" aria-label="BookRight">BookRight</p>
+            <h1 id="opret-behandler-heading">Opret ny behandler</h1>
+        </header>
+
+        <EditForm class="opret-kunde-form"
+                  Model="model"
+                  OnValidSubmit="OpretBehandlerAsync"
+                  FormName="OpretBehandlerForm">
+
+            <fieldset class="formular-sektion">
+                <legend class="visually-hidden">Behandlerens stamoplysninger</legend>
+
+                <div class="formular-grid">
+                    <div class="formular-felt">
+                        <label for="fornavn">Fornavn</label>
+                        <InputText id="fornavn" autocomplete="given-name" @bind-Value="model.Fornavn" />
+                    </div>
+
+                    <div class="formular-felt">
+                        <label for="efternavn">Efternavn</label>
+                        <InputText id="efternavn" autocomplete="family-name" @bind-Value="model.Efternavn" />
+                    </div>
+
+                    <div class="formular-felt formular-felt--fuld">
+                        <label for="autorisationsnummer">Autorisationsnummer</label>
+                        <InputText id="autorisationsnummer" @bind-Value="model.AutorisationsNummer" />
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="formular-sektion">
+                <legend class="visually-hidden">Kontaktoplysninger</legend>
+
+                <div class="formular-grid">
+                    <div class="formular-felt">
+                        <label for="telefon">Telefon</label>
+                        <InputText id="telefon" type="tel" autocomplete="tel" @bind-Value="model.Telefon" />
+                    </div>
+
+                    <div class="formular-felt">
+                        <label for="email">Email</label>
+                        <InputText id="email" type="email" autocomplete="email" @bind-Value="model.Email" />
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="formular-sektion">
+                <legend class="visually-hidden">Autorisationstype</legend>
+
+                <div class="formular-felt formular-felt--fuld">
+                    <label for="autorisationstype">Autorisationstype</label>
+                    <InputSelect id="autorisationstype" @bind-Value="model.AutorisationsType">
+                        @foreach (var type in Enum.GetValues<AutorisationsTypeDTO>())
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </InputSelect>
+                </div>
+            </fieldset>
+
+            <fieldset class="formular-sektion">
+                <legend>Tilknyttede klinikker</legend>
+
+                @if (klinikker is null)
+                {
+                    <p>Henter klinikker...</p>
+                }
+                else if (!klinikker.Any())
+                {
+                    <p>Ingen klinikker fundet.</p>
+                }
+                else
+                {
+                    <div class="formular-grid">
+                        @foreach (var klinik in klinikker)
+                        {
+                            <label class="formular-felt formular-felt--checkbox">
+                                <input type="checkbox"
+                                       checked="@model.KlinikIds.Contains(klinik.KlinikId)"
+                                       @onchange="e => ToggleKlinik(klinik.KlinikId, (bool)e.Value!)" />
+                                @klinik.Navn
+                            </label>
+                        }
+                    </div>
+                }
+            </fieldset>
+
+            <button type="submit">Opret behandler</button>
+        </EditForm>
+
+        @if (!string.IsNullOrWhiteSpace(besked))
+        {
+            <p class="opret-kunde-status" role="status">@besked</p>
+        }
+    </article>
+</main>
+
+@code {
+    private OpretBehandlerRequest model = new();
+    private IEnumerable<Klinik>? klinikker;
+    private string besked = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        klinikker = await KlinikRepository.HentAlleAsync();
+    }
+
+    private void ToggleKlinik(Guid klinikId, bool erValgt)
+    {
+        if (erValgt)
+            model.KlinikIds.Add(klinikId);
+        else
+            model.KlinikIds.Remove(klinikId);
+    }
+
+    private async Task OpretBehandlerAsync()
+    {
+        var behandlerId = await BehandlerFacade.OpretBehandlerAsync(model);
+
+        besked = $"Behandler oprettet med ID: {behandlerId}";
+
+        model = new OpretBehandlerRequest();
+        klinikker = await KlinikRepository.HentAlleAsync(); // Refresh så checkboxes nulstilles korrekt
+    }
+}

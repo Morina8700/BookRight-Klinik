@@ -6,5 +6,6 @@ namespace BookRight.Domain.Interfaces
     {
         Task<Behandler?> HentEfterIdAsync(Guid behandlerId);
         Task<IEnumerable<Behandler>> HentAlleAsync();
+        Task AddAsync(Behandler behandler);
     }
 }

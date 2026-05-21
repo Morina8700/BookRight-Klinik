@@ -30,5 +30,10 @@ namespace BookRight.Infrastructure.Repositories
                 .Include(b => b.Behandlingstyper)
                 .ToListAsync();
         }
+        public async Task AddAsync(Behandler behandler)
+        {
+            await _context.Behandlere.AddAsync(behandler);
+            await _context.SaveChangesAsync();
+        }
     }
 }

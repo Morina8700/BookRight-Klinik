@@ -51,5 +51,11 @@ namespace BookRight.Domain.Aggregates
         // Tjekker om behandleren er ansat på klinikken
         public bool ArbejderPå(Guid klinikId)
             => _klinikker.Any(k => k.KlinikId == klinikId);
+
+        // Tilknytter behandleren til en klinik - bruges ved oprettelse af behandler
+        // _klinikker er private, så denne metode er den eneste måde at tilføje på (encapsulation)
+        public void TilknytKlinik(Klinik klinik)
+            => _klinikker.Add(klinik);
+
     }
 }
