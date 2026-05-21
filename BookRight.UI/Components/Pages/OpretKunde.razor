@@ -5,11 +5,31 @@
 @inject IKundeFacade KundeFacade
 
 <main class="opret-kunde-side">
+	<BookRightTopNav />
+
 	<article class="opret-kunde-kort" aria-labelledby="opret-kunde-heading">
 		<header class="opret-kunde-header">
-			<p class="brand" aria-label="BookRight">BookRight</p>
 			<h1 id="opret-kunde-heading">Opret ny kunde</h1>
 		</header>
+
+		@if (visFejlPopup && !string.IsNullOrWhiteSpace(fejlBesked))
+		{
+			<aside class="error-popup" role="alert" aria-live="assertive">
+				<div>
+					<strong>Kunne ikke oprette kunde</strong>
+					<p>@fejlBesked</p>
+				</div>
+
+				<button type="button" @onclick="LukFejlPopup" aria-label="Luk fejlbesked">
+					Luk
+				</button>
+			</aside>
+		}
+
+		@if (!string.IsNullOrWhiteSpace(succesBesked))
+		{
+			<p class="opret-kunde-status" role="status">@succesBesked</p>
+		}
 
 		<EditForm class="opret-kunde-form"
 				  Model="model"
@@ -71,11 +91,6 @@
 
 			<button type="submit">Opret kunde</button>
 		</EditForm>
-
-		@if (!string.IsNullOrWhiteSpace(besked))
-		{
-			<p class="opret-kunde-status" role="status">@besked</p>
-		}
 	</article>
 </main>
 
@@ -86,17 +101,47 @@
 		Fødselsdato = DateOnly.FromDateTime(DateTime.Today)
 	};
 
-	private string besked = "";
+	private string? fejlBesked;
+	private string? succesBesked;
+	private bool visFejlPopup;
 
 	private async Task OpretKundeAsync()
 	{
-		var kundeId = await KundeFacade.OpretKundeAsync(model);
+		fejlBesked = null;
+		succesBesked = null;
+		visFejlPopup = false;
 
-		besked = $"Kunde oprettet med ID: {kundeId}";
-
-		model = new OpretKundeRequest
+		try
 		{
-			Fødselsdato = DateOnly.FromDateTime(DateTime.Today)
-		};
+			var kundeId = await KundeFacade.OpretKundeAsync(model);
+
+			succesBesked = $"Kunde oprettet med ID: {kundeId}";
+
+			model = new OpretKundeRequest
+			{
+				Fødselsdato = DateOnly.FromDateTime(DateTime.Today)
+			};
+		}
+		catch (ArgumentException ex)
+		{
+			fejlBesked = ex.Message;
+			visFejlPopup = true;
+		}
+		catch (InvalidOperationException ex)
+		{
+			fejlBesked = ex.Message;
+			visFejlPopup = true;
+		}
+		catch (Exception)
+		{
+			fejlBesked = "Der opstod en uventet fejl. Prøv igen.";
+			visFejlPopup = true;
+		}
+	}
+
+	private void LukFejlPopup()
+	{
+		visFejlPopup = false;
+		fejlBesked = null;
 	}
 }

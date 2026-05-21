@@ -1,0 +1,76 @@
+<header class="bookright-topbar">
+    <h1>BookRight</h1>
+
+    <nav class="bookright-topbar__nav" aria-label="Primær navigation">
+        <NavLink class="bookright-topbar__link" href="" Match="NavLinkMatch.All">Dashboard</NavLink>
+        <NavLink class="bookright-topbar__link" href="kunder/opret">Kunder</NavLink>
+        <NavLink class="bookright-topbar__link" href="opret-booking">Booking</NavLink>
+        <NavLink class="bookright-topbar__link" href="kundehistorik">Historik</NavLink>
+        <NavLink class="bookright-topbar__link" href="booking-administration">Administration</NavLink>
+    </nav>
+</header>
+
+<style>
+    .bookright-topbar {
+        display: grid;
+        gap: 1.5rem;
+        box-sizing: border-box;
+        width: min(100%, 980px);
+        margin: 0 auto 1.75rem;
+    }
+
+    .bookright-topbar h1 {
+        margin: 0;
+        color: #2c287f;
+        font-size: 2.6rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .bookright-topbar__nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .bookright-topbar__link {
+        min-width: 7rem;
+        padding: 0.85rem 1.25rem;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #4338ca;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 800;
+        box-shadow: 0 10px 24px rgba(49, 46, 129, 0.08);
+    }
+
+    .bookright-topbar__link.active {
+        background: #4f46e5;
+        color: #ffffff;
+    }
+
+    .bookright-topbar__link:hover {
+        background: #eef2ff;
+        color: #312e81;
+    }
+
+    .bookright-topbar__link.active:hover {
+        background: #4f46e5;
+        color: #ffffff;
+    }
+
+    @@media (max-width: 640px) {
+        .bookright-topbar h1 {
+            font-size: 2.1rem;
+        }
+
+        .bookright-topbar__nav {
+            gap: 0.75rem;
+        }
+
+        .bookright-topbar__link {
+            width: 100%;
+        }
+    }
+</style>
