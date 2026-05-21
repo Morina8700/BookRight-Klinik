@@ -82,8 +82,11 @@ namespace BookRight.UseCases.Commands.Booking.OpretBooking
             var rabatResultat = await _rabatBeregner.BeregnBedsteRabatAsync(rabatBeregningContext);
 
             if (rabatResultat.RabatType == RabatType.Fødselsdag)
+            {
                 kunde.MarkerFoedselsdagsrabatBrugt();
-
+                await _kundeRepository.OpdaterAsync(kunde);
+            }
+            
             // 7. Opret booking
             var booking = new DomainBooking(
                 command.KundeId,

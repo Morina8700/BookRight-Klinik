@@ -24,6 +24,12 @@ namespace BookRight.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task OpdaterAsync(Kunde kunde)
+        {
+            _context.Kunder.Update(kunde);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Kunde?> HentPåIdAsync(Guid kundeId)
         {
             return await _context.Kunder

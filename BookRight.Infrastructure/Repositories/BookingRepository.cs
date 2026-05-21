@@ -98,10 +98,7 @@ namespace BookRight.Infrastructure.Repositories
                     on booking.BehandlingstypeId equals behandlingstype.BehandlingstypeId
                 join klinik in _context.Klinikker
                     on booking.KlinikId equals klinik.KlinikId
-                where booking.KundeId == kundeId &&
-                      (booking.Status == BookingStatus.Afsluttet ||
-                       booking.Status == BookingStatus.Aflyst ||
-                       booking.Status == BookingStatus.NoShow)
+                where booking.KundeId == kundeId
                 orderby booking.StartTid descending
                 select new KundehistorikPost(
                     booking.BookingId,

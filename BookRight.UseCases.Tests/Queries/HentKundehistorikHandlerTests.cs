@@ -52,7 +52,7 @@ public class HentKundehistorikHandlerTests
         var resultat = await handler.HandleAsync(kundeId);
 
         // Assert
-        Assert.Same(forventet, resultat);
+        Assert.Equal(forventet, resultat.ToList());
         queryRepo.Verify(r => r.HentForKundeAsync(kundeId), Times.Once);
     }
 }
