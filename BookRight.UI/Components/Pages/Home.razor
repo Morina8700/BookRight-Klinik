@@ -1,4 +1,10 @@
 @page "/"
+@rendermode InteractiveServer
+@using BookRight.Facade.Interfaces
+@using BookRight.Facade.Contracts.Bookinger
+@using BookRight.Facade.Contracts.Kunder
+@inject IBookingFacade BookingFacade
+@inject IKundeFacade KundeFacade
 
 <PageTitle>BookRight Dashboard</PageTitle>
 
@@ -6,73 +12,78 @@
     <BookRightTopNav />
 
     <section class="welcome-panel" aria-labelledby="welcome-heading">
-        <h2 id="welcome-heading">Velkommen til BookRight</h2>
-        <p>Oversigt over din klinik</p>
+        <h2 id="welcome-heading">Kalender-dashboard</h2>
+        <p>Overblik over bookinger for behandlere</p>
+
+        <label for="kalender-dato" style="display:block; margin-top:1rem; font-weight:600;">Vælg dato</label>
+        <input id="kalender-dato"
+               type="date"
+               value="@valgtDato.ToString("yyyy-MM-dd")"
+               @onchange="OnDatoChanged" />
     </section>
 
     <section class="metric-grid" aria-label="Nøgletal">
         <article class="metric-card">
             <p>Aktive kunder</p>
-            <strong>127</strong>
+            <strong>@antalKunder</strong>
         </article>
 
         <article class="metric-card">
-            <p>Bookinger i dag</p>
-            <strong>8</strong>
+            <p>Bookinger valgt dato</p>
+            <strong>@bookinger.Count</strong>
         </article>
 
         <article class="metric-card">
             <p>Bookinger denne uge</p>
-            <strong>45</strong>
+            <strong>@antalBookingerDenneUge</strong>
         </article>
 
         <article class="metric-card">
-            <p>Afsluttede behandlinger</p>
-            <strong>892</strong>
+            <p>Afsluttede på valgt dato</p>
+            <strong>@antalAfsluttedePaaValgtDato</strong>
         </article>
     </section>
 
     <section class="appointments-panel" aria-labelledby="appointments-heading">
-        <h2 id="appointments-heading">Kommende aftaler i dag</h2>
+        <h2 id="appointments-heading">Bookinger @valgtDato.ToString("dd/MM/yyyy")</h2>
 
         <div class="appointment-list">
-            <article class="appointment-item">
-                <div>
-                    <span>Dato &amp; Tid</span>
-                    <time datetime="2026-05-21T10:00">21-05-2026</time>
-                    <p>10.00 - 11.00</p>
-                </div>
+            @if (bookinger.Count == 0)
+            {
+                <p>Ingen bookinger på @valgtDato.ToString("dd/MM/yyyy").</p>
+            }
+            else
+            {
+                @foreach (var gruppe in bookinger.GroupBy(b => b.BehandlerNavn).OrderBy(g => g.Key))
+                {
+                    <h3 style="margin: 1.25rem 0 0.5rem; color: #2c287f; font-weight: 800;">@gruppe.Key</h3>
 
-                <div>
-                    <span>Behandling</span>
-                    <strong>Massage</strong>
-                    <p>Sarah Andersen</p>
-                </div>
+                    @foreach (var b in gruppe.OrderBy(x => x.StartTid))
+                    {
+                        <article class="appointment-item">
+                            <div>
+                                <span>Dato &amp; Tid</span>
+                                <time datetime="@b.StartTid.ToString("yyyy-MM-ddTHH:mm")">
+                                    @b.StartTid.ToString("dd-MM-yyyy")
+                                </time>
+                                <p>@b.StartTid.ToString("HH:mm") - @b.SlutTid.ToString("HH:mm")</p>
+                            </div>
 
-                <div>
-                    <span>Klinik</span>
-                    <strong>BookRight Egtved</strong>
-                </div>
-            </article>
+                            <div>
+                                <span>Behandling</span>
+                                <strong>@b.BehandlingstypeNavn</strong>
+                                <p>@b.KundeNavn</p>
+                            </div>
 
-            <article class="appointment-item">
-                <div>
-                    <span>Dato &amp; Tid</span>
-                    <time datetime="2026-05-21T14:30">21-05-2026</time>
-                    <p>14.30 - 15.30</p>
-                </div>
-
-                <div>
-                    <span>Behandling</span>
-                    <strong>Fysioterapi</strong>
-                    <p>Casper Madsen</p>
-                </div>
-
-                <div>
-                    <span>Klinik</span>
-                    <strong>BookRight Egtved</strong>
-                </div>
-            </article>
+                            <div>
+                                <span>Behandler</span>
+                                <strong>@b.BehandlerNavn</strong>
+                                <p>@b.Status</p>
+                            </div>
+                        </article>
+                    }
+                }
+            }
         </div>
     </section>
 
@@ -90,6 +101,56 @@
         </article>
     </section>
 </main>
+
+@code {
+    private DateOnly valgtDato = DateOnly.FromDateTime(DateTime.Today);
+    private List<BookingKalenderResponse> bookinger = new();
+
+    private int antalKunder;
+    private int antalBookingerDenneUge;
+    private int antalAfsluttedePaaValgtDato;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await IndlaesDashboardAsync();
+    }
+
+    private async Task OnDatoChanged(ChangeEventArgs e)
+    {
+        if (DateOnly.TryParse(e.Value?.ToString(), out var nyDato))
+        {
+            valgtDato = nyDato;
+            await IndlaesDashboardAsync();
+        }
+    }
+
+    private async Task IndlaesDashboardAsync()
+    {
+        antalKunder = (await KundeFacade.HentAlleKunderAsync()).Count;
+
+        bookinger = await BookingFacade.HentBookingerForDatoAsync(valgtDato);
+
+        antalAfsluttedePaaValgtDato = bookinger.Count(b =>
+            string.Equals(b.Status, "Afsluttet", StringComparison.OrdinalIgnoreCase));
+
+        antalBookingerDenneUge = await TaelBookingerDenneUgeAsync();
+    }
+
+    private async Task<int> TaelBookingerDenneUgeAsync()
+    {
+        var iDag = DateOnly.FromDateTime(DateTime.Today);
+        var mandag = iDag.AddDays(-(((int)iDag.DayOfWeek + 6) % 7));
+        var total = 0;
+
+        for (var dato = mandag; dato <= mandag.AddDays(6); dato = dato.AddDays(1))
+        {
+            var dagensBookinger = await BookingFacade.HentBookingerForDatoAsync(dato);
+            total += dagensBookinger.Count;
+        }
+
+        return total;
+    }
+}
 
 <style>
     .home-dashboard {
