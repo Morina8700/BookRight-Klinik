@@ -4,6 +4,7 @@ namespace BookRight.Domain.Interfaces
     public interface IKundeRepository
     {
         Task TilføjAsync(Kunde kunde);
+        Task OpdaterAsync(Kunde kunde);
         Task<Kunde?> HentPåIdAsync(Guid kundeID);
         Task<IEnumerable<Kunde>> HentAlleAsync();
     }

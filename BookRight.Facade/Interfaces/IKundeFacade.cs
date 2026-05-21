@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BookRight.Facade.Contracts.Kunder;
+﻿using BookRight.Facade.Contracts.Kunder;
 
 namespace BookRight.Facade.Interfaces
 {
