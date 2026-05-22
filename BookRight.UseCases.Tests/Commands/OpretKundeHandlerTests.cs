@@ -36,7 +36,7 @@ public class OpretKundeHandlerTests
 
         kundeRepo.Verify(
             r => r.TilføjAsync(It.Is<Kunde>(k =>
-                k.Fornavn == "Anna" && k.Email == "anna@test.dk")),
+                k.Fornavn == "Anna" && k.Email.Value == "anna@test.dk")),
             Times.Once);
     }
 }

@@ -18,8 +18,8 @@ public class HentAlleKunderHandler
         return kunder.Select(k => new KundeListPost(
             k.KundeId,
             $"{k.Fornavn} {k.Efternavn}",
-            k.Email,
-            k.Telefon,
+            k.Email.Value,
+            k.Telefon.Value,
             k.loyalitetsNiveau.ToString()
         )).ToList();
     }

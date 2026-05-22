@@ -137,6 +137,50 @@ button:focus {
     border: 0;
 }
 
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(6px);
+}
+
+.error-modal {
+    width: min(100%, 32rem);
+    padding: 2rem;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+}
+
+.error-modal h2 {
+    margin: 0 0 0.75rem;
+    color: #111827;
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.error-modal p {
+    margin: 0 0 1.5rem;
+    font-size: 1rem;
+}
+
+.error-modal button {
+    width: 100%;
+    min-height: 3.5rem;
+    border: 0;
+    border-radius: 8px;
+    background: #4f46e5;
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
 @media (max-width: 48rem) {
     .opret-kunde-side {
         padding: 1rem;
@@ -157,38 +201,5 @@ button:focus {
     ::deep .opret-kunde-form {
         gap: 1.75rem;
     }
-
-    .error-popup {
-        display: flex;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        padding: 1rem 1.25rem;
-        border: 1px solid #fecaca;
-        border-radius: 8px;
-        background: #fff1f2;
-        color: #7f1d1d;
-    }
-
-        .error-popup strong {
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-
-        .error-popup p {
-            margin: 0;
-        }
-
-        .error-popup button {
-            width: auto;
-            min-height: auto;
-            padding: 0.45rem 0.75rem;
-            border: 1px solid #fecaca;
-            border-radius: 6px;
-            background: #ffffff;
-            color: #991b1b;
-            font-size: 0.95rem;
-            font-weight: 700;
-        }
 
 }

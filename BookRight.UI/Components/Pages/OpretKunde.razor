@@ -14,16 +14,19 @@
 
 		@if (visFejlPopup && !string.IsNullOrWhiteSpace(fejlBesked))
 		{
-			<aside class="error-popup" role="alert" aria-live="assertive">
-				<div>
-					<strong>Kunne ikke oprette kunde</strong>
+			<div class="modal-backdrop" role="presentation">
+				<aside class="error-modal"
+					   role="alertdialog"
+					   aria-modal="true"
+					   aria-labelledby="error-modal-title">
+					<h2 id="error-modal-title">Kunne ikke oprette kunde</h2>
 					<p>@fejlBesked</p>
-				</div>
 
-				<button type="button" @onclick="LukFejlPopup" aria-label="Luk fejlbesked">
-					Luk
-				</button>
-			</aside>
+					<button type="button" @onclick="LukFejlPopup">
+						Luk
+					</button>
+				</aside>
+			</div>
 		}
 
 		@if (!string.IsNullOrWhiteSpace(succesBesked))

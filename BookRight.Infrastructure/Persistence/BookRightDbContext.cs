@@ -36,6 +36,28 @@ namespace BookRight.Infrastructure.Persistence
                 .Property(b => b.KrævetAutorisationsType)
                 .HasColumnName("AutorisationsType");
 
+            // Email
+            modelBuilder.Entity<Kunde>()
+                .Property(k => k.Email)
+                .HasConversion(
+                email => email.Value,
+                value => new Email(value))
+                .HasMaxLength(255);
+
+            modelBuilder.Entity<Kunde>()
+                .HasIndex(k => k.Email)
+                .IsUnique();
+
+            //Telefon
+            modelBuilder.Entity<Kunde>()
+                .Property(k => k.Telefon)
+                .HasConversion(
+                telefon => telefon.Value,
+                value => new Telefon(value))
+                .HasMaxLength(8);
+
+
+
             var klinik1Id = Guid.Parse("11111111-1111-1111-1111-111111111111");
             var klinik2Id = Guid.Parse("22222222-2222-2222-2222-222222222222");
             var klinik3Id = Guid.Parse("33333333-3333-3333-3333-333333333333");
