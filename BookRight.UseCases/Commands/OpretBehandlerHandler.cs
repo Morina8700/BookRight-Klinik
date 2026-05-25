@@ -12,11 +12,16 @@ namespace BookRight.UseCases.Commands
     {
         private readonly IBehandlerRepository _behandlerRepository;
         private readonly IKlinikRepository _klinikRepository;
+        private readonly IBehandlingstypeRepository _behandlingstypeRepository;
 
-        public OpretBehandlerHandler(IBehandlerRepository behandlerRepository, IKlinikRepository klinikRepository)
+        public OpretBehandlerHandler(
+            IBehandlerRepository behandlerRepository,
+            IKlinikRepository klinikRepository,
+            IBehandlingstypeRepository behandlingstypeRepository)
         {
             _behandlerRepository = behandlerRepository;
             _klinikRepository = klinikRepository;
+            _behandlingstypeRepository = behandlingstypeRepository;
         }
 
         public async Task<Guid> HandleAsync(OpretBehandlerCommand command)
@@ -41,6 +46,14 @@ namespace BookRight.UseCases.Commands
                 {
                     behandler.TilknytKlinik(klinik);
                 }
+            }
+
+            foreach (var behandlingstypeId in command.BehandlingstypeIds)
+            {
+                var behandlingstype = await _behandlingstypeRepository.HentEfterIdAsync(behandlingstypeId)
+                    ?? throw new InvalidOperationException("Behandlingstype ikke fundet");
+
+                behandler.TilknytBehandlingstype(behandlingstype);
             }
 
             await _behandlerRepository.AddAsync(behandler);

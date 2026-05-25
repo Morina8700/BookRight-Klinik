@@ -14,6 +14,39 @@
             <h1 id="opret-booking-heading">Opret booking</h1>
         </header>
 
+
+        @if (senesteBookingResponse is not null && success)
+        {
+            <div class="modal-backdrop" role="presentation">
+                <aside class="booking-modal booking-modal--success"
+                       role="dialog"
+                       aria-modal="true"
+                       aria-labelledby="booking-success-title">
+                    <h2 id="booking-success-title">Booking oprettet</h2>
+
+                    <p>Pris før rabat: @senesteBookingResponse.PrisUdenRabat.ToString("N2") kr.</p>
+                    <p>Rabat: @senesteBookingResponse.AnvendtRabatType (@senesteBookingResponse.RabatProcent.ToString("N0")%)</p>
+                    <p>Pris efter rabat: @senesteBookingResponse.PrisMedRabat.ToString("N2") kr.</p>
+
+                    <button type="button" @onclick="LukPopup">Luk</button>
+                </aside>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(besked) && !success)
+        {
+            <div class="modal-backdrop" role="presentation">
+                <aside class="booking-modal booking-modal--error"
+                       role="alertdialog"
+                       aria-modal="true"
+                       aria-labelledby="booking-error-title">
+                    <h2 id="booking-error-title">Kunne ikke oprette booking</h2>
+                    <p>@besked</p>
+                    <button type="button" @onclick="LukPopup">Luk</button>
+                </aside>
+            </div>
+        }
+
         @if (isLoading)
         {
             <p>Indlæser data...</p>
@@ -110,25 +143,6 @@
                             <p class="pris-note">Rabat beregnes automatisk ved oprettelse</p>
                         </div>
                     }
-                }
-
-                @* Vis pris efter booking *@
-                @if (senesteBookingResponse is not null && senesteBookingResponse.Success)
-                {
-                    <div class="pris-boks">
-                        <p class="pris-label">Pris med rabat</p>
-                        <p class="pris-beloeb">@senesteBookingResponse.PrisMedRabat kr.</p>
-
-                        <p class="pris-note">
-                            Anvendt rabat: @senesteBookingResponse.AnvendtRabatType
-                        </p>
-                    </div>
-                }
-
-                @* Fejl- og succesbesked *@
-                @if (!string.IsNullOrEmpty(besked))
-                {
-                    <p class="@(success ? "status-succes" : "status-fejl")" role="status">@besked</p>
                 }
 
                 <button type="button" @onclick="OpretBookingAsync" disabled="@(!KanOprette())">
@@ -274,5 +288,13 @@
             besked = ex.Message;
             success = false;
         }
+
+
+    }
+    private void LukPopup()
+    {
+        besked = "";
+        success = false;
+        senesteBookingResponse = null;
     }
 }

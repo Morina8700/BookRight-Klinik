@@ -12,6 +12,24 @@
 			<h1 id="opret-kunde-heading">Opret ny kunde</h1>
 		</header>
 
+
+		@if (visSuccessPopup && !string.IsNullOrWhiteSpace(succesBesked))
+		{
+			<div class="modal-backdrop" role="presentation">
+				<aside class="success-modal"
+					   role="status"
+					   aria-live="polite"
+					   aria-labelledby="success-modal-title">
+					<h2 id="success-modal-title">Kunde oprettet</h2>
+					<p>@succesBesked</p>
+
+					<button type="button" @onclick="LukSuccessPopup">
+						Luk
+					</button>
+				</aside>
+			</div>
+		}
+
 		@if (visFejlPopup && !string.IsNullOrWhiteSpace(fejlBesked))
 		{
 			<div class="modal-backdrop" role="presentation">
@@ -33,6 +51,8 @@
 		{
 			<p class="opret-kunde-status" role="status">@succesBesked</p>
 		}
+
+
 
 		<EditForm class="opret-kunde-form"
 				  Model="model"
@@ -107,18 +127,21 @@
 	private string? fejlBesked;
 	private string? succesBesked;
 	private bool visFejlPopup;
+	private bool visSuccessPopup;
 
 	private async Task OpretKundeAsync()
 	{
 		fejlBesked = null;
 		succesBesked = null;
 		visFejlPopup = false;
+		visSuccessPopup = false;
 
 		try
 		{
 			var kundeId = await KundeFacade.OpretKundeAsync(model);
 
 			succesBesked = $"Kunde oprettet med ID: {kundeId}";
+			visSuccessPopup = true;
 
 			model = new OpretKundeRequest
 			{
@@ -140,11 +163,18 @@
 			fejlBesked = "Der opstod en uventet fejl. Prøv igen.";
 			visFejlPopup = true;
 		}
+
 	}
 
 	private void LukFejlPopup()
 	{
 		visFejlPopup = false;
 		fejlBesked = null;
+	}
+
+	private void LukSuccessPopup()
+	{
+		visSuccessPopup = false;
+		succesBesked = null;
 	}
 }

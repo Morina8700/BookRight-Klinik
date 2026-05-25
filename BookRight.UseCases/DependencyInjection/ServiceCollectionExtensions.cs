@@ -1,9 +1,10 @@
 using BookRight.Domain.Strategies.Rabatberegner;
+using BookRight.UseCases.Commands;
 using BookRight.UseCases.Commands.Booking.OpretBooking;
 using BookRight.UseCases.Commands.Booking.Status.Handlers;
 using BookRight.UseCases.Commands.Kunde;
 using BookRight.UseCases.Queries.Behandler;
-using BookRight.UseCases.Queries.Behandlingstype;
+using BookRight.UseCases.Queries.Behandler.Behandlingstype;
 using BookRight.UseCases.Queries.Kalender;
 using BookRight.UseCases.Queries.Klinik;
 using BookRight.UseCases.Queries.Kunde;
@@ -18,6 +19,7 @@ public static class ServiceCollectionExtensions
     {
         // Use cases — handlers
         services.AddScoped<OpretKundeHandler>();
+        services.AddScoped<OpretBehandlerHandler>();
         services.AddScoped<OpretBookingHandler>();
         services.AddScoped<AflysBookingHandler>();
         services.AddScoped<AfslutBookingHandler>();

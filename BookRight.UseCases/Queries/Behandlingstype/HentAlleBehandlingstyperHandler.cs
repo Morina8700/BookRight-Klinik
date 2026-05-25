@@ -1,6 +1,6 @@
 using BookRight.Domain.Interfaces;
 
-namespace BookRight.UseCases.Queries.Behandlingstype;
+namespace BookRight.UseCases.Queries.Behandler.Behandlingstype;
 
 public class HentAlleBehandlingstyperHandler
 {
@@ -19,7 +19,8 @@ public class HentAlleBehandlingstyperHandler
             b.BehandlingstypeId,
             b.Navn ?? string.Empty,
             b.Pris,
-            b.VarighedMinutter
+            b.VarighedMinutter,
+            b.KrævetAutorisationsType.ToString()
         )).ToList();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BookRight.Domain.Enums;
+using BookRight.Domain.ValueObjects;
 
 namespace BookRight.Domain.Aggregates
 {
@@ -8,8 +9,8 @@ namespace BookRight.Domain.Aggregates
         public Guid BehandlerId { get; private set; }
         public string? Fornavn { get; private set; }
         public string? Efternavn { get; private set; }
-        public string? Email { get; private set; }
-        public string? Telefon { get; private set; }
+        public Email Email { get; private set; }
+        public Telefon Telefon { get; private set; }
         public string? AutorisationsNummer { get; private set; }
         public AutorisationsType KrævetAutorisationsType { get; private set; }
 
@@ -28,18 +29,14 @@ namespace BookRight.Domain.Aggregates
                 throw new ArgumentException("Fornavn må ikke være tomt");
             if (string.IsNullOrWhiteSpace(efternavn))
                 throw new ArgumentException("Efternavn må ikke være tomt");
-            if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("Email må ikke være tomt");
-            if (string.IsNullOrWhiteSpace(telefon))
-                throw new ArgumentException("Telefon må ikke være tomt");
             if (string.IsNullOrWhiteSpace(autorisationsNummer))
                 throw new ArgumentException("AutorisationsNummer må ikke være tomt");
 
             BehandlerId = Guid.NewGuid();
             Fornavn = fornavn;
             Efternavn = efternavn;
-            Email = email;
-            Telefon = telefon;
+            Email = new Email(email);
+            Telefon = new Telefon(telefon);
             AutorisationsNummer = autorisationsNummer;
             KrævetAutorisationsType = krævetAutorisationsType;
         }
@@ -56,6 +53,14 @@ namespace BookRight.Domain.Aggregates
         // _klinikker er private, så denne metode er den eneste måde at tilføje på (encapsulation)
         public void TilknytKlinik(Klinik klinik)
             => _klinikker.Add(klinik);
+
+        public void TilknytBehandlingstype(Behandlingstype behandlingstype)
+        {
+            if (behandlingstype.KrævetAutorisationsType != KrævetAutorisationsType)
+                throw new InvalidOperationException("Behandleren har ikke den nødvendige autorisation til behandlingstypen");
+
+            _behandlingstyper.Add(behandlingstype);
+        }
 
     }
 }

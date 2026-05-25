@@ -1,8 +1,9 @@
-namespace BookRight.UseCases.Queries.Behandlingstype;
+namespace BookRight.UseCases.Queries.Behandler.Behandlingstype;
 
 public record BehandlingstypeListPost(
     Guid BehandlingstypeId,
     string Navn,
     decimal Pris,
-    int VarighedMinutter
+    int VarighedMinutter,
+    string KrævetAutorisationsType
 );

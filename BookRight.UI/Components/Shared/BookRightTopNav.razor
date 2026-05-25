@@ -1,10 +1,14 @@
 <header class="bookright-topbar">
-    <h1>BookRight</h1>
+    <h1 class="bookright-logo" aria-label="BookRight">
+        <span>Book</span>
+        <span>Right</span>
+    </h1>
 
     <nav class="bookright-topbar__nav" aria-label="Primær navigation">
         <NavLink class="bookright-topbar__link" href="" Match="NavLinkMatch.All">Dashboard</NavLink>
         <NavLink class="bookright-topbar__link" href="kunder/opret">Kunder</NavLink>
         <NavLink class="bookright-topbar__link" href="opret-booking">Booking</NavLink>
+        <NavLink class="bookright-topbar__link" href="behandlere/opret">Behandler</NavLink>
         <NavLink class="bookright-topbar__link" href="kundehistorik">Historik</NavLink>
         <NavLink class="bookright-topbar__link" href="booking-administration">Administration</NavLink>
     </nav>
@@ -19,12 +23,33 @@
         margin: 0 auto 1.75rem;
     }
 
-    .bookright-topbar h1 {
+    .bookright-logo {
+        display: inline-grid;
+        grid-template-columns: auto;
+        justify-self: start;
+        gap: 0;
         margin: 0;
-        color: #2c287f;
-        font-size: 2.6rem;
-        font-weight: 800;
         line-height: 1;
+    }
+
+    .bookright-logo span {
+        display: inline-block;
+        width: max-content;
+        padding: 0.22rem 0.42rem;
+        background: #000000;
+        color: #ffffff;
+        font-size: 2.25rem;
+        font-weight: 500;
+        letter-spacing: 0;
+    }
+
+    .bookright-logo span:first-child {
+        border: 2px solid #c4ff91;
+    }
+
+    .bookright-logo span:last-child {
+        margin-left: 4.5rem;
+        margin-top: -0.15rem;
     }
 
     .bookright-topbar__nav {
@@ -37,32 +62,38 @@
         min-width: 7rem;
         padding: 0.85rem 1.25rem;
         border-radius: 8px;
-        background: #ffffff;
-        color: #4338ca;
+        border: 1px solid #3a3a3a;
+        background: #000000;
+        color: #ffffff;
         text-align: center;
         text-decoration: none;
         font-weight: 800;
-        box-shadow: 0 10px 24px rgba(49, 46, 129, 0.08);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
     }
 
     .bookright-topbar__link.active {
-        background: #4f46e5;
-        color: #ffffff;
+        border-color: #c4ff91;
+        background: #c4ff91;
+        color: #000000;
     }
 
     .bookright-topbar__link:hover {
-        background: #eef2ff;
-        color: #312e81;
+        border-color: #c4ff91;
+        color: #c4ff91;
     }
 
     .bookright-topbar__link.active:hover {
-        background: #4f46e5;
-        color: #ffffff;
+        background: #c4ff91;
+        color: #000000;
     }
 
     @@media (max-width: 640px) {
-        .bookright-topbar h1 {
-            font-size: 2.1rem;
+        .bookright-logo span {
+            font-size: 1.75rem;
+        }
+
+        .bookright-logo span:last-child {
+            margin-left: 3.4rem;
         }
 
         .bookright-topbar__nav {

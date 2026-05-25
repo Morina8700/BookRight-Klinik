@@ -14,6 +14,16 @@ namespace BookRight.UseCases.Commands.Kunde
 
         public async Task<Guid> HandleAsync(OpretKundeCommand command)
         {
+            if (await _kundeRepository.EmailFindesAsync(command.Email))
+            {
+                throw new InvalidOperationException("Der findes allerede en kunde med den email.");
+            }
+
+            if (await _kundeRepository.TelefonFindesAsync(command.Telefon))
+            {
+                throw new InvalidOperationException("Der findes allerede en kunde med det telefonnummer.");
+            }
+
             var kunde = new DomainKunde(
                 command.Fornavn,
                 command.Efternavn,

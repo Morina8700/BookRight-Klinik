@@ -1,4 +1,6 @@
-﻿namespace BookRight.Facade.Contracts.Bookinger
+﻿using BookRight.Facade.Contracts.Behandler;
+
+namespace BookRight.Facade.Contracts.Bookinger
 {
     public class BehandlingstypeDto
     {
@@ -6,5 +8,7 @@
         public string Navn { get; set; }
         public decimal Pris { get; set; }
         public int VarighedMinutter { get; set; }
+        public AutorisationsTypeDTO KrævetAutorisationsType { get; set; }
+
     }
 }

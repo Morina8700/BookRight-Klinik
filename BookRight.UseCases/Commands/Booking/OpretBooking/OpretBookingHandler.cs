@@ -108,6 +108,7 @@ namespace BookRight.UseCases.Commands.Booking.OpretBooking
                 Success = true,
                 PrisUdenRabat = rabatResultat.PrisUdenRabat.Belob,
                 PrisMedRabat = rabatResultat.PrisMedRabat.Belob,
+                RabatProcent = rabatResultat.RabatProcent.Value,
                 AnvendtRabatType = rabatResultat.RabatType.ToString()
             };
         }

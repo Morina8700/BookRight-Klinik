@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using BookRight.Domain.Aggregates;
 using BookRight.Domain.Interfaces;
+using BookRight.Domain.ValueObjects;
 using BookRight.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,6 +43,22 @@ namespace BookRight.Infrastructure.Repositories
                 .OrderBy(k => k.Fornavn)
                 .ThenBy(k => k.Efternavn)
                 .ToListAsync();
+        }
+
+        public async Task<bool> EmailFindesAsync(string email)
+        {
+            var emailValue = new Email(email);
+
+            return await _context.Kunder
+                .AnyAsync(k => k.Email == emailValue);
+        }
+
+        public async Task<bool> TelefonFindesAsync(string telefon)
+        {
+            var telefonValue = new Telefon(telefon);
+
+            return await _context.Kunder
+                .AnyAsync(k => k.Telefon == telefonValue);
         }
     }
 }

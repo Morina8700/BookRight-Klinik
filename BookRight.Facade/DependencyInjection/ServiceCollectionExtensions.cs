@@ -14,6 +14,7 @@ public static class ServiceCollectionExtensions
         // Facade
         services.AddScoped<IKundeFacade, KundeFacade>();
         services.AddScoped<IBookingFacade, BookingFacade>();
+        services.AddScoped<IBehandlerFacade, BehandlerFacade>();
 
         return services;
     }

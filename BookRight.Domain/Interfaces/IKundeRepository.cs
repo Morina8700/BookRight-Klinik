@@ -7,5 +7,7 @@ namespace BookRight.Domain.Interfaces
         Task OpdaterAsync(Kunde kunde);
         Task<Kunde?> HentPåIdAsync(Guid kundeID);
         Task<IEnumerable<Kunde>> HentAlleAsync();
+        Task<bool> EmailFindesAsync(string email);
+        Task<bool> TelefonFindesAsync(string telefon);
     }
 }

@@ -4,7 +4,7 @@ using BookRight.UseCases.Commands.Booking.OpretBooking;
 using BookRight.UseCases.Commands.Booking.Status.Commands;
 using BookRight.UseCases.Commands.Booking.Status.Handlers;
 using BookRight.UseCases.Queries.Behandler;
-using BookRight.UseCases.Queries.Behandlingstype;
+using BookRight.UseCases.Queries.Behandler.Behandlingstype;
 using BookRight.UseCases.Queries.Kalender;
 using BookRight.UseCases.Queries.Klinik;
 using BookRight.UseCases.Queries.Kundehistorik;
@@ -69,6 +69,7 @@ namespace BookRight.Facade.Services
                 PrisUdenRabat = result.PrisUdenRabat,
                 PrisMedRabat = result.PrisMedRabat,
                 AnvendtRabatType = result.AnvendtRabatType,
+                RabatProcent = result.RabatProcent,
                 Besked = "Booking oprettet"
             };
         }

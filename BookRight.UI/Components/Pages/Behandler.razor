@@ -1,18 +1,51 @@
 ﻿@page "/behandlere/opret"
 @rendermode InteractiveServer
 @using BookRight.Facade.Contracts.Behandler
+@using BookRight.Facade.Contracts.Bookinger
 @using BookRight.Facade.Interfaces
-@using BookRight.Domain.Aggregates
-@using BookRight.Domain.Interfaces
 @inject IBehandlerFacade BehandlerFacade
-@inject IKlinikRepository KlinikRepository
 
 <main class="opret-kunde-side">
+    <BookRightTopNav />
+
     <article class="opret-kunde-kort" aria-labelledby="opret-behandler-heading">
         <header class="opret-kunde-header">
-            <p class="brand" aria-label="BookRight">BookRight</p>
             <h1 id="opret-behandler-heading">Opret ny behandler</h1>
         </header>
+
+        @if (visSuccessPopup && !string.IsNullOrWhiteSpace(succesBesked))
+        {
+            <div class="modal-backdrop" role="presentation">
+                <aside class="success-modal"
+                       role="status"
+                       aria-live="polite"
+                       aria-labelledby="success-modal-title">
+                    <h2 id="success-modal-title">Behandler oprettet</h2>
+                    <p>@succesBesked</p>
+
+                    <button type="button" @onclick="LukSuccessPopup">
+                        Luk
+                    </button>
+                </aside>
+            </div>
+        }
+
+        @if (visFejlPopup && !string.IsNullOrWhiteSpace(fejlBesked))
+        {
+            <div class="modal-backdrop" role="presentation">
+                <aside class="error-modal"
+                       role="alertdialog"
+                       aria-modal="true"
+                       aria-labelledby="error-modal-title">
+                    <h2 id="error-modal-title">Kunne ikke oprette behandler</h2>
+                    <p>@fejlBesked</p>
+
+                    <button type="button" @onclick="LukFejlPopup">
+                        Luk
+                    </button>
+                </aside>
+            </div>
+        }
 
         <EditForm class="opret-kunde-form"
                   Model="model"
@@ -61,12 +94,14 @@
 
                 <div class="formular-felt formular-felt--fuld">
                     <label for="autorisationstype">Autorisationstype</label>
-                    <InputSelect id="autorisationstype" @bind-Value="model.AutorisationsType">
+                    <select id="autorisationstype"
+                            value="@model.AutorisationsType"
+                            @onchange="OnAutorisationsTypeChanged">
                         @foreach (var type in Enum.GetValues<AutorisationsTypeDTO>())
                         {
                             <option value="@type">@type</option>
                         }
-                    </InputSelect>
+                    </select>
                 </div>
             </fieldset>
 
@@ -97,25 +132,76 @@
                 }
             </fieldset>
 
+            <fieldset class="formular-sektion">
+                <legend>Specialer / behandlingstyper</legend>
+
+                @if (behandlingstyper is null)
+                {
+                    <p>Henter behandlingstyper...</p>
+                }
+                else if (!behandlingstyper.Any())
+                {
+                    <p>Ingen behandlingstyper fundet.</p>
+                }
+                else if (ValgteBehandlingstyper.Count == 0)
+                {
+                    <p>Vælg en autorisationstype for at se behandlingstyper.</p>
+                }
+                else
+                {
+                    <ul class="speciale-liste">
+                        @foreach (var behandlingstype in ValgteBehandlingstyper)
+                        {
+                            <li>@behandlingstype.Navn</li>
+                        }
+                    </ul>
+                }
+            </fieldset>
+
             <button type="submit">Opret behandler</button>
         </EditForm>
 
-        @if (!string.IsNullOrWhiteSpace(besked))
-        {
-            <p class="opret-kunde-status" role="status">@besked</p>
-        }
     </article>
 </main>
 
 @code {
     private OpretBehandlerRequest model = new();
-    private IEnumerable<Klinik>? klinikker;
-    private string besked = "";
+    private IEnumerable<KlinikDto>? klinikker;
+    private IEnumerable<BehandlingstypeDto>? behandlingstyper;
+    private string? fejlBesked;
+    private string? succesBesked;
+    private bool visFejlPopup;
+    private bool visSuccessPopup;
 
     protected override async Task OnInitializedAsync()
     {
-        klinikker = await KlinikRepository.HentAlleAsync();
+        klinikker = await BehandlerFacade.HentAlleKlinikkerAsync();
+        behandlingstyper = await BehandlerFacade.HentAlleBehandlingstyperAsync();
+        OpdaterBehandlingstyperFraAutorisationsType();
     }
+
+    private void OnAutorisationsTypeChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse<AutorisationsTypeDTO>(e.Value?.ToString(), out var valgtType))
+        {
+            model.AutorisationsType = valgtType;
+        }
+
+        OpdaterBehandlingstyperFraAutorisationsType();
+    }
+
+    private void OpdaterBehandlingstyperFraAutorisationsType()
+    {
+        model.BehandlingstypeIds = behandlingstyper?
+            .Where(b => b.KrævetAutorisationsType == model.AutorisationsType)
+            .Select(b => b.BehandlingstypeId)
+            .ToList() ?? new List<Guid>();
+    }
+
+    private IReadOnlyList<BehandlingstypeDto> ValgteBehandlingstyper =>
+        behandlingstyper?
+            .Where(b => model.BehandlingstypeIds.Contains(b.BehandlingstypeId))
+            .ToList() ?? new List<BehandlingstypeDto>();
 
     private void ToggleKlinik(Guid klinikId, bool erValgt)
     {
@@ -124,14 +210,60 @@
         else
             model.KlinikIds.Remove(klinikId);
     }
-
     private async Task OpretBehandlerAsync()
     {
-        var behandlerId = await BehandlerFacade.OpretBehandlerAsync(model);
+        fejlBesked = null;
+        succesBesked = null;
+        visFejlPopup = false;
+        visSuccessPopup = false;
 
-        besked = $"Behandler oprettet med ID: {behandlerId}";
+        try
+        {
+            if (model.KlinikIds.Count == 0)
+            {
+                throw new ArgumentException("Vælg mindst én klinik til behandleren.");
+            }
 
-        model = new OpretBehandlerRequest();
-        klinikker = await KlinikRepository.HentAlleAsync(); // Refresh så checkboxes nulstilles korrekt
+            if (model.BehandlingstypeIds.Count == 0)
+            {
+                throw new ArgumentException("Vælg mindst én behandlingstype til behandleren.");
+            }
+
+            var behandlerId = await BehandlerFacade.OpretBehandlerAsync(model);
+
+            succesBesked = $"Behandler oprettet med ID: {behandlerId}";
+            visSuccessPopup = true;
+
+            model = new OpretBehandlerRequest();
+            klinikker = await BehandlerFacade.HentAlleKlinikkerAsync(); // Refresh så checkboxes nulstilles korrekt
+            behandlingstyper = await BehandlerFacade.HentAlleBehandlingstyperAsync();
+        }
+        catch (ArgumentException ex)
+        {
+            fejlBesked = ex.Message;
+            visFejlPopup = true;
+        }
+        catch (InvalidOperationException ex)
+        {
+            fejlBesked = ex.Message;
+            visFejlPopup = true;
+        }
+        catch (Exception)
+        {
+            fejlBesked = "Der opstod en uventet fejl. Prøv igen.";
+            visFejlPopup = true;
+        }
+    }
+
+    private void LukFejlPopup()
+    {
+        visFejlPopup = false;
+        fejlBesked = null;
+    }
+
+    private void LukSuccessPopup()
+    {
+        visSuccessPopup = false;
+        succesBesked = null;
     }
 }

@@ -1,11 +1,11 @@
-﻿.opret-booking-side {
+.opret-kunde-side {
     max-width: 980px;
     margin: 0 auto;
     padding: 1.75rem;
     color: var(--br-text);
 }
 
-.opret-booking-kort {
+.opret-kunde-kort {
     width: 100%;
     margin: 0;
     padding: 2rem;
@@ -13,19 +13,11 @@
     background: var(--br-surface);
     border: 1px solid var(--br-border);
     border-radius: 8px;
-    box-shadow: 0 16px 32px rgba(31, 41, 55, 0.12);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.22);
 }
 
-.opret-booking-header {
+.opret-kunde-header {
     margin-bottom: 2rem;
-}
-
-.brand {
-    margin: 0 0 0.75rem;
-    color: var(--br-text);
-    font-size: 2rem;
-    font-weight: 800;
-    line-height: 1;
 }
 
 h1 {
@@ -35,7 +27,7 @@ h1 {
     font-weight: 800;
 }
 
-.opret-booking-form {
+::deep .opret-kunde-form {
     display: flex;
     flex-direction: column;
     gap: 2.25rem;
@@ -43,6 +35,15 @@ h1 {
 
 .formular-sektion {
     min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.formular-sektion legend {
+    margin-bottom: 0.75rem;
+    color: var(--br-text);
+    font-weight: 800;
 }
 
 .formular-grid {
@@ -53,8 +54,23 @@ h1 {
 
 .formular-felt {
     display: flex;
+    min-width: 0;
     flex-direction: column;
     gap: 0.75rem;
+    color: var(--br-text);
+}
+
+.formular-felt--fuld {
+    grid-column: 1 / -1;
+}
+
+.formular-felt--checkbox {
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid var(--br-border);
+    border-radius: 8px;
+    background: var(--br-surface-soft);
 }
 
 label {
@@ -64,8 +80,8 @@ label {
     line-height: 1.2;
 }
 
-input,
-select {
+::deep input,
+::deep select {
     display: block;
     box-sizing: border-box;
     width: 100%;
@@ -77,55 +93,12 @@ select {
     background: var(--br-surface-soft);
     font-family: inherit;
     font-size: 1.25rem;
-    appearance: none;
 }
 
-select {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 1.5rem center;
-    background-size: 16px 12px;
-    padding-right: 3rem;
-}
-
-input:focus,
-select:focus {
+::deep input:focus,
+::deep select:focus {
     outline: 3px solid rgba(196, 255, 145, 0.22);
     border-color: var(--br-accent);
-}
-
-input:disabled,
-select:disabled {
-    background: #151515;
-    color: #8f8f8f;
-    cursor: not-allowed;
-}
-
-.pris-boks {
-    padding: 1.5rem;
-    background: var(--br-surface-soft);
-    border-radius: 0.875rem;
-    border: 1px solid var(--br-accent);
-}
-
-.pris-label {
-    margin: 0 0 0.25rem;
-    color: var(--br-muted);
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.pris-beloeb {
-    margin: 0 0 0.25rem;
-    color: var(--br-text);
-    font-size: 1.75rem;
-    font-weight: 800;
-}
-
-.pris-note {
-    margin: 0;
-    color: var(--br-muted);
-    font-size: 0.875rem;
 }
 
 button {
@@ -141,25 +114,33 @@ button {
     cursor: pointer;
 }
 
-button:disabled {
-    background: #5f7450;
-    cursor: not-allowed;
-}
-
 button:focus {
     outline: 3px solid rgba(196, 255, 145, 0.3);
     outline-offset: 3px;
 }
 
-.status-succes {
-    margin: 0;
+.opret-kunde-status {
+    margin: 1.5rem 0 0;
     color: var(--br-accent);
     font-weight: 700;
 }
 
-.status-fejl {
+.speciale-liste {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
     margin: 0;
-    color: var(--br-danger);
+    padding: 0;
+    list-style: none;
+}
+
+.speciale-liste li {
+    padding: 1rem;
+    border: 1px solid var(--br-border);
+    border-left: 4px solid var(--br-accent);
+    border-radius: 8px;
+    background: var(--br-surface-soft);
+    color: var(--br-text);
     font-weight: 700;
 }
 
@@ -174,32 +155,35 @@ button:focus {
     backdrop-filter: blur(6px);
 }
 
-.booking-modal {
+.error-modal,
+.success-modal {
     width: min(100%, 32rem);
     padding: 2rem;
+    border: 1px solid var(--br-accent);
     border-radius: 8px;
     background: var(--br-bg);
     color: var(--br-text);
-    border: 1px solid var(--br-accent);
-    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
 }
 
-.booking-modal h2 {
+.error-modal h2,
+.success-modal h2 {
     margin: 0 0 0.75rem;
     color: var(--br-text);
     font-size: 1.35rem;
     font-weight: 800;
 }
 
-.booking-modal p {
-    margin: 0 0 1rem;
+.error-modal p,
+.success-modal p {
+    margin: 0 0 1.5rem;
     font-size: 1rem;
 }
 
-.booking-modal button {
+.error-modal button,
+.success-modal button {
     width: 100%;
     min-height: 3.5rem;
-    margin-top: 0.5rem;
     border: 0;
     border-radius: 8px;
     background: var(--br-accent);
@@ -209,24 +193,32 @@ button:focus {
     cursor: pointer;
 }
 
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 @media (max-width: 48rem) {
-    .opret-booking-side {
+    .opret-kunde-side {
         padding: 1rem;
     }
 
-    .opret-booking-kort {
+    .opret-kunde-kort {
         padding: 2rem 1.25rem;
-    }
-
-    .brand {
-        font-size: 2.25rem;
     }
 
     .formular-grid {
         grid-template-columns: 1fr;
     }
 
-    .opret-booking-form {
-        gap: 1.75rem;
+    .speciale-liste {
+        grid-template-columns: 1fr;
     }
 }

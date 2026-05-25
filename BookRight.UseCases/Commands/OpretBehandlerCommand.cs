@@ -12,6 +12,7 @@ namespace BookRight.UseCases.Commands
      string Telefon,
      String AutorisationsNummer,
      string AutorisationsType,
-     List<Guid> KlinikIds
+     List<Guid> KlinikIds,
+     List<Guid> BehandlingstypeIds
      );
 }

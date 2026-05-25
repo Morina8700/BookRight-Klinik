@@ -2,15 +2,16 @@
     max-width: 980px;
     margin: 0 auto;
     padding: 1.75rem;
-    color: #1f2937;
+    color: var(--br-text);
 }
 
 .opret-kunde-kort {
     width: 100%;
     margin: 0;
     padding: 2rem;
-    color: #172344;
-    background: #fff;
+    color: var(--br-text);
+    background: var(--br-surface);
+    border: 1px solid var(--br-border);
     border-radius: 8px;
     box-shadow: 0 16px 32px rgba(31, 41, 55, 0.12);
 }
@@ -21,7 +22,7 @@
 
 .brand {
     margin: 0 0 0.75rem;
-    color: #262b8f;
+    color: var(--br-text);
     font-size: 2.000rem;
     font-weight: 800;
     line-height: 1;
@@ -29,7 +30,7 @@
 
 h1 {
     margin: 0;
-    color: #2c287f;
+    color: var(--br-text);
     font-size: 1.55rem;
     font-weight: 800;
 }
@@ -65,7 +66,7 @@ h1 {
 }
 
 label {
-    color: #172344;
+    color: var(--br-text);
     font-size: 1.25rem;
     font-weight: 700;
     line-height: 1.2;
@@ -76,10 +77,10 @@ label {
     display: block;
     box-sizing: border-box;
     width: 100%;
-    border: 1px solid #cfd5df;
+    border: 1px solid var(--br-border);
     border-radius: 0.875rem;
-    color: #111827;
-    background: #fff;
+    color: var(--br-text);
+    background: var(--br-surface-soft);
     font-family: inherit;
     font-size: 1.25rem;
 }
@@ -97,8 +98,8 @@ label {
 
 ::deep input:focus,
 ::deep textarea:focus {
-    outline: 3px solid rgba(79, 63, 240, 0.22);
-    border-color: #4f3ff0;
+    outline: 3px solid rgba(196, 255, 145, 0.22);
+    border-color: var(--br-accent);
 }
 
 button {
@@ -107,21 +108,21 @@ button {
     min-height: 4.5rem;
     border: 0;
     border-radius: 0.875rem;
-    color: #fff;
-    background: #4f3ff0;
+    color: var(--br-surface);
+    background: var(--br-accent);
     font-size: 1.5rem;
     font-weight: 800;
     cursor: pointer;
 }
 
 button:focus {
-    outline: 3px solid rgba(79, 63, 240, 0.3);
+    outline: 3px solid rgba(196, 255, 145, 0.3);
     outline-offset: 3px;
 }
 
 .opret-kunde-status {
     margin: 1.5rem 0 0;
-    color: #14532d;
+    color: var(--br-accent);
     font-weight: 700;
 }
 
@@ -144,38 +145,43 @@ button:focus {
     display: grid;
     place-items: center;
     padding: 1rem;
-    background: rgba(15, 23, 42, 0.45);
+    background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(6px);
 }
 
-.error-modal {
+.error-modal,
+.success-modal {
     width: min(100%, 32rem);
     padding: 2rem;
     border-radius: 8px;
-    background: #ffffff;
-    color: #111827;
+    background: var(--br-bg);
+    color: var(--br-text);
+    border: 1px solid var(--br-accent);
     box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
 }
 
-.error-modal h2 {
+.error-modal h2,
+.success-modal h2 {
     margin: 0 0 0.75rem;
-    color: #111827;
+    color: var(--br-text);
     font-size: 1.35rem;
     font-weight: 800;
 }
 
-.error-modal p {
+.error-modal p,
+.success-modal p {
     margin: 0 0 1.5rem;
     font-size: 1rem;
 }
 
-.error-modal button {
+.error-modal button,
+.success-modal button {
     width: 100%;
     min-height: 3.5rem;
     border: 0;
     border-radius: 8px;
-    background: #4f46e5;
-    color: #ffffff;
+    background: var(--br-accent);
+    color: var(--br-surface);
     font-size: 1.25rem;
     font-weight: 800;
     cursor: pointer;
